@@ -63,7 +63,7 @@ function set_time_limit(model, config, dataset_name)
     return
 end
 
-function build_and_solve_model(data, config, dataset_name)
+function build_and_solve_model(data, config, dataset_name; time_limit=nothing)
     opf_config = config["OPF"][dataset_name]
     OPF = PGLearn.OPF2TYPE[opf_config["type"]]
     solver_config = get(opf_config, "solver", Dict())
@@ -85,7 +85,10 @@ function build_and_solve_model(data, config, dataset_name)
     )
 
     set_silent(opf.model)
-    set_time_limit(opf.model, config, dataset_name)
+    # Set time limit if one is not already set
+    if JuMP.time_limit_sec(opf.model) !== nothing
+        JuMP.set_time_limit_sec(opf.model, time_limit)
+    end
     
     PGLearn.solve!(opf)
 
