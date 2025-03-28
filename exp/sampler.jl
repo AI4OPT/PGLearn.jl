@@ -43,8 +43,6 @@ function set_time_limit(model, config, dataset_name)
     # if config has time_limit set, use that
     if haskey(config, dataset_name) && haskey(config[dataset_name], "time_limit")
         set_time_limit_sec(model, config[dataset_name]["time_limit"])
-        @info "Set $dataset_name time limit to $(round(time_limit, digits=2))s."
-        return
     else
         # check if the case.json file exists
         if haskey(config, "export_dir") && isfile(joinpath(config["export_dir"], "case.json"))
@@ -52,24 +50,16 @@ function set_time_limit(model, config, dataset_name)
             
             # check if it has a reference solution
             reference = get(case_file, dataset_name, nothing)
-            if isnothing(reference)
-                @info "No time limit set for $dataset_name since no reference solution was found."
-                return
-            end
-            
+            isnothing(reference) && return
+
             # get the reference solve time
             solve_time = reference["meta"]["solve_time"]
             
             # set time limit to 10x the reference time, with a minimum of 1 minute
             time_limit = max(60, solve_time * 10)
             set_time_limit_sec(model, time_limit)
-
-            @info "Set $dataset_name time limit to $(round(time_limit, digits=2))s based on case.json."
-            return
         end
     end
-    
-    @info "No time limit set for $dataset_name."
     return
 end
 
