@@ -39,28 +39,33 @@ _optimizer_value_type(::Type{Clarabel.Optimizer{T}}) where{T} = T
 _optimizer_value_type(m::MOI.OptimizerWithAttributes) = _optimizer_value_type(m.optimizer_constructor)
 _optimizer_value_type(m::JuMP.AbstractModel) = JuMP.value_type(m)
 
-function set_time_limit(model, config, dataset_name)
-    # if config has time_limit set, use that
-    if haskey(config, dataset_name) && haskey(config[dataset_name], "time_limit")
-        set_time_limit_sec(model, config[dataset_name]["time_limit"])
-    else
-        # check if the case.json file exists
-        if haskey(config, "export_dir") && isfile(joinpath(config["export_dir"], "case.json"))
-            case_file = load_json(joinpath(config["export_dir"], "case.json"))
-            
-            # check if it has a reference solution
-            reference = get(case_file, dataset_name, nothing)
-            isnothing(reference) && return
 
-            # get the reference solve time
-            solve_time = reference["meta"]["solve_time"]
-            
-            # set time limit to 10x the reference time, with a minimum of 1 minute
-            time_limit = max(60, solve_time * 10)
-            set_time_limit_sec(model, time_limit)
+function get_time_limits(config)
+    OPFs = sort(collect(keys(config["OPF"])))
+    time_limits = Dict{String,Float64}()
+    for dataset_name in OPFs
+        # if config has time_limit set, use that
+        if haskey(config, dataset_name) && haskey(config[dataset_name], "time_limit")
+            time_limits[dataset_name] = config[dataset_name]["time_limit"]
+        else
+            # check if the case.json file exists
+            if haskey(config, "export_dir") && isfile(joinpath(config["export_dir"], "case.json"))
+                case_file = load_json(joinpath(config["export_dir"], "case.json"))
+                
+                # check if it has a reference solution
+                reference = get(case_file, dataset_name, nothing)
+                isnothing(reference) && continue
+
+                # get the reference solve time
+                solve_time = reference["meta"]["solve_time"]
+                
+                # set time limit to 10x the reference time, with a minimum of 1 minute
+                time_limit = max(60, solve_time * 10)
+                time_limits[dataset_name] = time_limit
+            end
         end
     end
-    return
+    return time_limits
 end
 
 function build_and_solve_model(data, config, dataset_name; time_limit=nothing)
@@ -86,8 +91,12 @@ function build_and_solve_model(data, config, dataset_name; time_limit=nothing)
 
     set_silent(opf.model)
     # Set time limit if one is not already set
-    if JuMP.time_limit_sec(opf.model) !== nothing
+    current_time_limit = JuMP.time_limit_sec(opf.model)
+    if isnothing(current_time_limit) || !isfinite(current_time_limit)
+        @info "setting time limit to $time_limit"
         JuMP.set_time_limit_sec(opf.model, time_limit)
+    else
+        @info "skipping time limit since it is already $(JuMP.time_limit_sec(opf.model))"
     end
     
     PGLearn.solve!(opf)
@@ -100,11 +109,13 @@ function build_and_solve_model(data, config, dataset_name; time_limit=nothing)
     return res
 end
 
-function main(data, config)
+function main(data, config; time_limits=nothing)
     d = Dict{String,Any}()
 
     for dataset_name in keys(config["OPF"])
-        d[dataset_name] = build_and_solve_model(data, config, dataset_name)
+        d[dataset_name] = build_and_solve_model(data, config, dataset_name, 
+            time_limit = isnothing(time_limits) ? nothing : get(time_limits, dataset_name, nothing)
+        )
     end
 
     return d
@@ -171,12 +182,14 @@ if abspath(PROGRAM_FILE) == @__FILE__
         )
     end
 
+    time_limits = get_time_limits(config)
+
     # Data generation
     @info "Generating instances for case $(case_name)\nSeed range: [$smin, $smax]\nDatasets: $OPFs"
     for s in smin:smax
         rng = MersenneTwister(s)
         tgen = @elapsed data_ = rand(rng, opf_sampler)
-        tsolve = @elapsed res = main(data_, config)
+        tsolve = @elapsed res = main(data_, config, time_limits=time_limits)
 
         # Update input data
         push!(D["input"]["seed"], s)
