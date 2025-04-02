@@ -110,7 +110,15 @@ if abspath(PROGRAM_FILE) == @__FILE__
     case_file, case_name = PGLearn._get_case_info(config)
     isfile(case_file) || error("Reference case file not found: $(case_file)")
     data = PGLearn.OPFData(make_basic_network(PowerModels.parse_file(case_file)))
-    opf_sampler = PGLearn.SimpleOPFSampler(data, config["sampler"])
+
+    sampler_type = get(config["sampler"], "type", "Simple")
+    opf_sampler = if sampler_type == "Simple"
+        PGLearn.SimpleOPFSampler(data, config["sampler"])
+    elseif sampler_type == "TimeSeries"
+        PGLearn.TimeSeriesOPFSampler(data, config["sampler"])
+    else
+        error("Invalid sampler type: $(sampler_type)")
+    end
 
     # Data info
     N, E, L, G = data.N, data.E, data.L, data.G
@@ -146,9 +154,8 @@ if abspath(PROGRAM_FILE) == @__FILE__
     # Data generation
     @info "Generating instances for case $(case_name)\nSeed range: [$smin, $smax]\nDatasets: $OPFs"
     for s in smin:smax
-        rng = MersenneTwister(s)
-        tgen = @elapsed data_ = rand(rng, opf_sampler)
-        tsolve = @elapsed res = main(data_, config)
+        tgen = @elapsed data_ = rand(s, opf_sampler)
+        tsolve = @elapsed res = main(data_, config, time_limits=time_limits)
 
         # Update input data
         push!(D["input"]["seed"], s)
