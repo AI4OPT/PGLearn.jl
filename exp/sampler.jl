@@ -155,7 +155,7 @@ if abspath(PROGRAM_FILE) == @__FILE__
     @info "Generating instances for case $(case_name)\nSeed range: [$smin, $smax]\nDatasets: $OPFs"
     for s in smin:smax
         tgen = @elapsed data_ = rand(s, opf_sampler)
-        tsolve = @elapsed res = main(data_, config, time_limits=time_limits)
+        tsolve = @elapsed res = main(data_, config)
 
         # Update input data
         push!(D["input"]["seed"], s)
