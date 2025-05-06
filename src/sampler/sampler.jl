@@ -7,7 +7,7 @@ function Random.rand(::AbstractRNG, ::AbstractOPFSampler)
     error("`rand` function not implemented for $(typeof(s)).")
 end
 
-struct SimpleOPFSampler{LS,RS,SS}
+struct SimpleOPFSampler{LS,RS,SS} <: AbstractOPFSampler
     data::OPFData
     load_sampler::LS
     reserve_sampler::RS
@@ -36,8 +36,14 @@ function Random.rand(rng::AbstractRNG, opf_sampler::SimpleOPFSampler)
     rand!(rng, opf_sampler, data)
 end
 
+function Random.rand(seed::Int, opf_sampler::SimpleOPFSampler)
+    rng = MersenneTwister(seed)
+    data = deepcopy(opf_sampler.data)
+    rand!(rng, opf_sampler, data)
+end
+
 """
-    rand!(rng::AbstractRNG, s::AbstractOPFSampler, data::Dict)
+    rand!(rng::AbstractRNG, s::SimpleOPFSampler, data::Dict)
 
 Sample one new OPF instance and modify `data` in-place.
 
