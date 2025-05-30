@@ -45,6 +45,7 @@ include("acp.jl")
 include("dcp.jl")
 include("socwr.jl")
 include("sdpwrm.jl")
+include("sparse_sdpwrm.jl")
 include("ed.jl")
 
 # other tests
@@ -52,7 +53,7 @@ include("quad_obj.jl")
 
 @testset "OPF" begin
     @testset "$(OPF)" for OPF in PGLearn.SUPPORTED_OPF_MODELS
-        if OPF == PGLearn.SDPOPF
+        if OPF in [PGLearn.SDPOPF, PGLearn.SparseSDPOPF]
             cases = PGLIB_CASES_SDP
         else
             cases = PGLIB_CASES
@@ -69,9 +70,13 @@ include("quad_obj.jl")
 
     @testset _test_socwr_DualFeasibility()
 
-    @testset _test_sdpwrm_DualSolFormat()
+    @testset _test_sdpwrm_DualSolFormat(PGLearn.SDPOPF)
 
-    @testset _test_sdpwrm_DualFeasibility()
+    @testset _test_sdpwrm_DualFeasibility(PGLearn.SDPOPF)
+
+    @testset _test_sdpwrm_DualSolFormat(PGLearn.SparseSDPOPF)
+
+    @testset _test_sdpwrm_DualFeasibility(PGLearn.SparseSDPOPF)
 end
 
 @testset "OPFData" begin

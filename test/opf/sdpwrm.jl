@@ -65,9 +65,13 @@ Test dual feasibility of SDPWRM problem.
 
 This test is executed on the 5 bus system.
 """
-function _test_sdpwrm_DualFeasibility()
+function _test_sdpwrm_DualFeasibility(OPF::Union{Type{PGLearn.SDPOPF}, Type{PGLearn.SparseSDPOPF}})
     T = Float128
-    data = PGLearn.OPFData(make_basic_network(pglib("5_pjm")))
+    if OPF == PGLearn.SDPOPF
+        data = PGLearn.OPFData(make_basic_network(pglib("5_pjm")))
+    else
+        data = PGLearn.OPFData(make_basic_network(pglib("14_ieee")))
+    end
     solver = JuMP.optimizer_with_attributes(Clarabel.Optimizer{T},
         "verbose" => true,
         "equilibrate_enable" => false,
@@ -77,7 +81,7 @@ function _test_sdpwrm_DualFeasibility()
         "tol_infeas_rel" => 1e-14,
         "tol_ktratio"    => 1e-14,
     )
-    opf = PGLearn.build_opf(PGLearn.SDPOPF, data, solver; T=T)
+    opf = PGLearn.build_opf(OPF, data, solver; T=T)
     # set_silent(opf.model)
     PGLearn.solve!(opf)
     res = PGLearn.extract_result(opf)
@@ -192,13 +196,13 @@ function _test_sdpwrm_DualFeasibility(data::PGLearn.OPFData, res; atol=1e-6)
     return nothing
 end
 
-function _test_sdpwrm_DualSolFormat()
+function _test_sdpwrm_DualSolFormat(OPF::Union{Type{PGLearn.SDPOPF}, Type{PGLearn.SparseSDPOPF}})
     data = make_basic_network(pglib("5_pjm"))
     N = length(data["bus"])
     E = length(data["branch"])
 
     solver = CLRBL_SOLVER_SDP
-    opf = PGLearn.build_opf(PGLearn.SDPOPF, data, solver)
+    opf = PGLearn.build_opf(OPF, data, solver)
     set_silent(opf.model)
     PGLearn.solve!(opf)
 
