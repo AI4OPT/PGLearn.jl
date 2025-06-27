@@ -37,12 +37,11 @@ function Random.rand(rng::AbstractRNG, opf_sampler::SimpleOPFSampler)
 end
 
 """
-    rand!(rng::AbstractRNG, s::AbstractOPFSampler, data::Dict)
+    rand!(rng::AbstractRNG, s::AbstractOPFSampler, data::OPFData)
 
 Sample one new OPF instance and modify `data` in-place.
 
-`data` must be a `Dict` in PowerModels format, representing the same network
-    (i.e., same grid components with same indexing) as the one used to create `s`.
+`data` must the same network (i.e., same grid components with same indexing) as the one used to create `s`.
 """
 function Random.rand!(rng::AbstractRNG, s::SimpleOPFSampler, data::OPFData)
     pd, qd = rand(rng, s.load_sampler)
