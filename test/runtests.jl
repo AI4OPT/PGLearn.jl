@@ -27,6 +27,7 @@ const OPT_SOLVERS = Dict(
     PGLearn.SOCOPFQuad        => IPOPT_SOLVER,
     PGLearn.SOCOPF            => CLRBL_SOLVER,
     PGLearn.SDPOPF            => CLRBL_SOLVER_SDP,
+    PGLearn.SparseSDPOPF      => CLRBL_SOLVER_SDP,
     PGLearn.DCOPF             => HIGHS_SOLVER,
     PGLearn.EconomicDispatch  => HIGHS_SOLVER,
 )

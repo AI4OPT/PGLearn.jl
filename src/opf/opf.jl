@@ -308,6 +308,7 @@ include("dcp.jl")      # DCPPowerModel
 include("ed.jl")       # EconomicDispatch
 include("socwr.jl")    # SOCOPF & SOCOPFQuad
 include("sdpwrm.jl")   # SDPWRMPowerModel
+include("sparse_sdpwrm.jl")
 
 # Contains a list of all supported OPF models
 const SUPPORTED_OPF_MODELS = Type{<:AbstractFormulation}[
@@ -317,6 +318,7 @@ const SUPPORTED_OPF_MODELS = Type{<:AbstractFormulation}[
     SOCOPFQuad,
     SOCOPF,
     SDPOPF,
+    SparseSDPOPF,
 ]
 
 # A name --> type dictionary
@@ -328,6 +330,7 @@ const OPF2TYPE = Dict{String,Type{<:AbstractFormulation}}(
     "SOCOPFQuad" => SOCOPFQuad,
     "SOCOPF" => SOCOPF,
     "SDPOPF" => SDPOPF,
+    "SparseSDPOPF" => SparseSDPOPF,
 )
 
 function build_opf(OPF::Type{<:AbstractFormulation}, network::Dict, optimizer; kwargs...)
