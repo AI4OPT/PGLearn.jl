@@ -5,7 +5,7 @@ using LinearAlgebra
 abstract type AbstractPTDF end
 
 
-struct LazyPTDF <: AbstractPTDF
+struct LazyPTDF{FT} <: AbstractPTDF
     N::Int  # number of buses
     E::Int  # number of branches
     islack::Int  # Index of slack bus
@@ -15,7 +15,7 @@ struct LazyPTDF <: AbstractPTDF
     BA::SparseMatrixCSC{Float64,Int}  # B*A
     AtBA::SparseMatrixCSC{Float64,Int}  # AᵀBA
 
-    F::SparseArrays.CHOLMOD.Factor{Float64, Int64}  # Factorization of AᵀBA
+    F::FT  # Factorization of AᵀBA
 
     # TODO: cache
 end
@@ -36,7 +36,7 @@ function LazyPTDF(data::OPFData)
 
     F = ldlt(S)
 
-    return LazyPTDF(N, E, ref_idx, A, b, BA, AtBA, F)
+    return LazyPTDF{typeof(F)}(N, E, ref_idx, A, b, BA, AtBA, F)
 end
 
 """
