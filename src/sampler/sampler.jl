@@ -41,7 +41,7 @@ end
 
 Sample one new OPF instance and modify `data` in-place.
 
-`data` must the same network (i.e., same grid components with same indexing) as the one used to create `s`.
+`data` must be the same network (i.e., same grid components with same indexing) as the one used to create `s`.
 """
 function Random.rand!(rng::AbstractRNG, s::SimpleOPFSampler, data::OPFData)
     pd, qd = rand(rng, s.load_sampler)
