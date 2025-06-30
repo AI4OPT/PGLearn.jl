@@ -65,6 +65,7 @@ function build_opf(::Type{SparseSDPOPF}, data::OPFData, optimizer;
         
         for i in 1:n
             i_bus = group[i]
+            # Voltage magnitude bounds
             # note that bounds are added for all the linked variables and not just one of them
             set_lower_bound.(WR_g[i, i], vmin[i_bus]^2)
             set_upper_bound.(WR_g[i, i], vmax[i_bus]^2)
@@ -126,10 +127,6 @@ function build_opf(::Type{SparseSDPOPF}, data::OPFData, optimizer;
     # 
     #   II. Constraints
     #
-
-    # Voltage magnitude bounds
-    # set_lower_bound.([WR[i, i] for i in 1:N], vmin.^2)
-    # set_upper_bound.([WR[i, i] for i in 1:N], vmax.^2)
 
     # Active generation bounds (both zero if generator is off)
     set_lower_bound.(pg, gen_status .* pgmin)
