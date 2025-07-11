@@ -41,6 +41,7 @@ function build_opf(::Type{SparseSDPOPF}, data::OPFData, optimizer;
     decomp = instantiate_model(make_basic_network(pglib(data.case)), SparseSDPWRMPowerModel, PM.build_opf).ext[:SDconstraintDecomposition]
     groups = decomp.decomp
     model.ext[:decomp] = decomp
+    # WR and WI variables of each group (clique)
     voltage_product_groups = Vector{Dict{Symbol, Matrix}}(undef, length(groups))
     w_map = Dict()
     wr_map = Dict()
@@ -76,13 +77,12 @@ function build_opf(::Type{SparseSDPOPF}, data::OPFData, optimizer;
             end
         end
 
-        # match each branch to one of the WR_g's and WI_g's
-        # iterate over both directions (but will only keep one)
+        # Match each branch to one of the entries of WR_g and of WI_g
+        # Iterate over both directions of each bus pair since a branch may exist in either direction
         offdiag_indices = [(i, j) for i in 1:n, j in 1:n if i != j]
         for (i, j) in offdiag_indices
             i_bus, j_bus = group[i], group[j]
-            # (i_bus, j_bus) needs to be in the direction of the branch between the buses
-            # since we define wr and wi on the branches instead of the buspairs
+            # if there exists a branch from i_bus to j_bus
             if (i_bus, j_bus) in zip(bus_fr, bus_to)
                 if !((i_bus, j_bus) in visited_directed_buspairs)
                     push!(visited_directed_buspairs, (i_bus, j_bus))
@@ -96,6 +96,7 @@ function build_opf(::Type{SparseSDPOPF}, data::OPFData, optimizer;
     end
 
     # linking constraints
+    # All variables representing the same variable in the dense formulation are required to be equal
     pair_matrix(group) = [(i, j) for i in group, j in group]
     tree = PM._prim(PM._overlap_graph(groups))
     overlapping_pairs = [Tuple(CartesianIndices(tree)[i]) for i in (LinearIndices(tree))[findall(x->x!=0, tree)]]
@@ -104,10 +105,11 @@ function build_opf(::Type{SparseSDPOPF}, data::OPFData, optimizer;
         var_i, var_j = voltage_product_groups[i], voltage_product_groups[j]
 
         Gi, Gj = pair_matrix(gi), pair_matrix(gj)
+        # Get the indices of entries in Gi and Gj that represent the same variables in the dense formulation
         overlap_i, overlap_j = PM._overlap_indices(Gi, Gj)
         indices = zip(overlap_i, overlap_j)
         for (idx_i, idx_j) in indices
-            # dual variables of the linking constraints cancel out when computing S
+            # Dual variables of the linking constraints cancel out when computing S
             # so we don't need to name them
             JuMP.@constraint(model, var_i[:WR][idx_i] == var_j[:WR][idx_j])
             JuMP.@constraint(model, var_i[:WI][idx_i] == var_j[:WI][idx_j])
