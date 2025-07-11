@@ -25,7 +25,7 @@ function test_opf_pm(::Type{PGLearn.SparseSDPOPF}, data::Dict)
     @test res["meta"]["primal_status"] ∈ ["FEASIBLE_POINT", "NEARLY_FEASIBLE_POINT"]
     @test res["meta"]["dual_status"] ∈ ["FEASIBLE_POINT", "NEARLY_FEASIBLE_POINT"]
     # Check objective value against PowerModels
-    @test isapprox(res["meta"]["primal_objective_value"], res_pm["objective"], atol=1e-3, rtol=1e-3)
+    @test isapprox(res["meta"]["primal_objective_value"], res_pm["objective"], atol=1e-4, rtol=1e-4)
     @test isapprox(res["meta"]["primal_objective_value"], res["meta"]["dual_objective_value"], rtol=1e-6)
 
     # Force PM solution into our model, and check that the solution is feasible
