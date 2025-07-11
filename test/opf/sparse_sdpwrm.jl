@@ -42,12 +42,9 @@ function test_opf_pm(::Type{PGLearn.SparseSDPOPF}, data::Dict)
         :w => Float64[sol_pm["bus"]["$i"]["w"] for i in 1:N]
     )
     model = opf.model
-    for varname in [:pg, :qg]
-        x = model[varname]
-        v = var2val_pm[varname]
-        @constraint(model, v .<= x .<= v)
-    end
-    @constraint(model, var2val_pm[:w] .<= model[:w] .<= var2val_pm[:w])
+    @constraint(model, model[:pg] .== var2val_pm[:pg])
+    @constraint(model, model[:qg] .== var2val_pm[:qg])
+    @constraint(model, model[:w] .== var2val_pm[:w])
 
     optimize!(model)
     @test termination_status(model) ∈ [OPTIMAL, ALMOST_OPTIMAL]
