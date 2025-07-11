@@ -66,16 +66,16 @@ include("quad_obj.jl")
     end
 
 
+    # SOCOPF
     @testset _test_socwr_DualSolFormat()
-
     @testset _test_socwr_DualFeasibility()
 
+    # SDPOPF
     @testset _test_sdpwrm_DualSolFormat(PGLearn.SDPOPF)
-
     @testset _test_sdpwrm_DualFeasibility(PGLearn.SDPOPF)
 
+    # SparseSDPOPF
     @testset _test_sdpwrm_DualSolFormat(PGLearn.SparseSDPOPF)
-
     @testset _test_sdpwrm_DualFeasibility(PGLearn.SparseSDPOPF)
 end
 
