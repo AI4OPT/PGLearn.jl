@@ -224,6 +224,7 @@ function test_sampler_script()
         "export_dir" => temp_dir,
         "floating_point_type" => "Float64",
         "sampler" => Dict(
+            "compute_clique_decomposition" => true,
             "load" => Dict(
                 "noise_type" => "ScaledLogNormal",
                 "l" => 0.6,
@@ -299,6 +300,16 @@ function test_sampler_script()
                     "name" => "Clarabel",
                     "attributes" => Dict(
                         "static_regularization_constant" => 1e-7,
+                    )
+                )
+            ),
+            "SparseSDPOPF" => Dict(
+                "type" => "SparseSDPOPF",
+                "solver" => Dict(
+                    "name" => "Clarabel",
+                    "attributes" => Dict(
+                        "static_regularization_constant" => 1e-7,
+                        "chordal_decomposition_enable" => false
                     )
                 )
             )

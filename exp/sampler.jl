@@ -139,8 +139,10 @@ if abspath(PROGRAM_FILE) == @__FILE__
     end
     @info "Floating-point data will be exported in `$(float_type)`"
 
+    compute_clique_decomposition = "compute_clique_decomposition" in keys(config["sampler"]) ? config["sampler"]["compute_clique_decomposition"] : false
+
     # Dummy run (for pre-compilation)
-    data0 = PGLearn.OPFData(make_basic_network(pglib("pglib_opf_case14_ieee")))
+    data0 = PGLearn.OPFData(make_basic_network(pglib("pglib_opf_case14_ieee")); compute_clique_decomposition=compute_clique_decomposition)
     opf_sampler0 = PGLearn.SimpleOPFSampler(data0, config["sampler"])
     rand!(MersenneTwister(1), opf_sampler0, data0)
     main(data0, config)
@@ -148,7 +150,6 @@ if abspath(PROGRAM_FILE) == @__FILE__
     # Load reference data and setup OPF sampler
     case_file, case_name = PGLearn._get_case_info(config)
     isfile(case_file) || error("Reference case file not found: $(case_file)")
-    compute_clique_decomposition = "compute_clique_decomposition" in keys(config["OPF"]) ? config["OPF"]["compute_clique_decomposition"] : false
     data = PGLearn.OPFData(make_basic_network(PowerModels.parse_file(case_file)); compute_clique_decomposition=compute_clique_decomposition)
     opf_sampler = PGLearn.SimpleOPFSampler(data, config["sampler"])
 

@@ -6,6 +6,8 @@ export_dir = "data/89_pegase"
 
 [sampler]
 # Sampler options
+compute_clique_decomposition = false
+
 [sampler.load]
 noise_type = "ScaledUniform"
 l          = 0.60               # Lower bound of base load factor
@@ -24,8 +26,6 @@ type = "Full"
 
 [OPF]
 # OPF formulations to solve for each sample
-compute_clique_decomposition = false
-
 [OPF.DCOPF]
 # Formulation/solver options
 type = "DCOPF"
