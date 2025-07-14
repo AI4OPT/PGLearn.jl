@@ -1,3 +1,5 @@
+# Part of this implementation is modified from PowerModelsAnnex.jl (https://github.com/lanl-ansi/PowerModelsAnnex.jl/blob/master/src/model/opf.jl).
+
 struct SOCOPFQuad <: AbstractFormulation end
 struct SOCOPF <: AbstractFormulation end
 

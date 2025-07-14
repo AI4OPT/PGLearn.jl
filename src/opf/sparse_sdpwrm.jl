@@ -1,3 +1,5 @@
+# Part of this implementation is modified from PowerModels.jl (https://github.com/lanl-ansi/PowerModels.jl/blob/master/src/form/wrm.jl).
+
 struct SparseSDPOPF <: AbstractFormulation end
 
 """
