@@ -258,7 +258,7 @@ function OPFData(network::Dict{String,Any}; compute_clique_decomposition::Bool=f
     A = sparse(A_i, A_j, A_v, E, N)
 
     if compute_clique_decomposition
-        clique_decomposition = instantiate_model(network, SparseSDPWRMPowerModel, PM.build_opf).ext[:SDconstraintDecomposition].decomp
+        clique_decomposition = _get_clique_decomposition(network)
     else 
         clique_decomposition = nothing
     end
@@ -282,6 +282,16 @@ function OPFData(network::Dict{String,Any}; compute_clique_decomposition::Bool=f
         branch_status,
         clique_decomposition,
     )
+end
+
+"""
+    _get_clique_decomposition(network::Dict{String,Any})
+
+Compute the clique decomposition of a PowerModels data dictionary.
+The output is a Vector containing all the cliques in the chordal completion of network.
+"""
+function _get_clique_decomposition(network::Dict{String,Any})
+    return instantiate_model(network, SparseSDPWRMPowerModel, PM.build_opf).ext[:SDconstraintDecomposition].decomp
 end
 
 function to_dict(data::OPFData)
