@@ -393,6 +393,7 @@ function _get_overlapping_pairs(groups::Vector{Vector{Int}})
     # Get the Cartesian indices of the adjacency matrix of the clique tree, which are exactly the indices of pairs
     # of cliques that overlap
     overlapping_pairs = [Tuple(CartesianIndices(tree)[i]) for i in (LinearIndices(tree))[findall(x->x!=0, tree)]]
+    return overlapping_pairs
 end
 
 """
