@@ -99,15 +99,14 @@ function build_opf(::Type{SparseSDPOPF}, data::OPFData, optimizer;
     # linking constraints
     # All variables representing the same variable in the dense formulation are required to be equal
     pair_matrix(group) = [(i, j) for i in group, j in group]
-    tree = PM._prim(PM._overlap_graph(groups))
-    overlapping_pairs = [Tuple(CartesianIndices(tree)[i]) for i in (LinearIndices(tree))[findall(x->x!=0, tree)]]
+    overlapping_pairs = _get_overlapping_pairs(groups)
     for (i, j) in overlapping_pairs
-        gi, gj = groups[i], groups[j]
+        gi, gj = groups[i], groups[j]  # with indices in the dense formulation
         var_i, var_j = voltage_product_groups[i], voltage_product_groups[j]
 
         Gi, Gj = pair_matrix(gi), pair_matrix(gj)
         # Get the indices of entries in Gi and Gj that represent the same variables in the dense formulation
-        overlap_i, overlap_j = PM._overlap_indices(Gi, Gj)
+        overlap_i, overlap_j = _overlap_indices(Gi, Gj)
         indices = zip(overlap_i, overlap_j)
         for (idx_i, idx_j) in indices
             # Dual variables of the linking constraints cancel out when computing S
@@ -379,4 +378,34 @@ function extract_dual(opf::OPFModel{SparseSDPOPF})
     end
 
     return dual_solution
+end
+
+"""
+    _get_overlapping_pairs(groups)
+
+Get the indices of pairs of cliques in groups that overlap.
+
+Refer to https://github.com/lanl-ansi/PowerModels.jl/blob/be6af59202a6868b20a41214cb341b883d62e5f0/src/form/wrm.jl#L273-L274
+"""
+function _get_overlapping_pairs(groups::Vector{Vector{Int}})
+    # Compute the clique tree
+    tree = PM._prim(PM._overlap_graph(groups))
+    # Get the Cartesian indices of the adjacency matrix of the clique tree, which are exactly the indices of pairs
+    # of cliques that overlap
+    overlapping_pairs = [Tuple(CartesianIndices(tree)[i]) for i in (LinearIndices(tree))[findall(x->x!=0, tree)]]
+end
+
+"""
+    idx_a, idx_b = _overlap_indices(A, B)
+Given two arrays (sizes need not match) that share some values, return:
+
+- linear index of shared values in A
+- linear index of shared values in B
+
+Thus, A[idx_a] == B[idx_b].
+
+Refer to https://github.com/lanl-ansi/PowerModels.jl/blob/be6af59202a6868b20a41214cb341b883d62e5f0/src/form/wrm.jl#L469
+"""
+function _overlap_indices(A::Array, B::Array, symmetric=true)
+    return PM._overlap_indices(A, B, symmetric)
 end
