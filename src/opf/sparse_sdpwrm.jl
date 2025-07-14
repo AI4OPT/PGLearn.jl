@@ -40,9 +40,8 @@ function build_opf(::Type{SparseSDPOPF}, data::OPFData, optimizer;
         * lower/upper bounds are set to zero
         * constraint coefficients are set to zero
     =#
-    decomp = instantiate_model(make_basic_network(pglib(data.case)), SparseSDPWRMPowerModel, PM.build_opf).ext[:SDconstraintDecomposition]
-    groups = decomp.decomp
-    model.ext[:decomp] = decomp
+    groups = data.clique_decomposition
+    isnothing(groups) && @error "Clique decomposition data required for solving SparseSDPOPF. Please set compute_clique_decomposition to true when creating the OPFData or in the sampler configuration."
     # WR and WI variables of each group (clique)
     voltage_product_groups = Vector{Dict{Symbol, Matrix}}(undef, length(groups))
     w_map = Dict()
@@ -306,8 +305,7 @@ function extract_dual(opf::OPFModel{SparseSDPOPF})
     )
 
     if has_duals(model)
-        decomp = model.ext[:decomp]
-        groups = decomp.decomp
+        groups = opf.data.clique_decomposition
         # Construct S (which has the sparsity pattern of the original network) by summing S_g of
         # every group g in the clique decomposition. S is PSD and satisfies the "sum" of all dual
         # constraints on S_g.

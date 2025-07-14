@@ -64,7 +64,7 @@ This test is executed on the 5 bus system.
 """
 function _test_sdpwrm_DualFeasibility(OPF::Union{Type{PGLearn.SDPOPF}, Type{PGLearn.SparseSDPOPF}})
     T = Float128
-    data = PGLearn.OPFData(make_basic_network(pglib("5_pjm")))
+    data = PGLearn.OPFData(make_basic_network(pglib("5_pjm")); compute_clique_decomposition=true)
     solver = JuMP.optimizer_with_attributes(Clarabel.Optimizer{T},
         "verbose" => true,
         "equilibrate_enable" => false,

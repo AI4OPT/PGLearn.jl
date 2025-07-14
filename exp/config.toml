@@ -24,6 +24,8 @@ type = "Full"
 
 [OPF]
 # OPF formulations to solve for each sample
+compute_clique_decomposition = false
+
 [OPF.DCOPF]
 # Formulation/solver options
 type = "DCOPF"

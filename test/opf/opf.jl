@@ -9,7 +9,7 @@ function test_opf_pm(OPF::Type{<:PGLearn.AbstractFormulation}, casename::String)
 
     network_drop = deepcopy(network)
 
-    is_bridge = PGLearn.bridges(PGLearn.OPFData(network_drop))
+    is_bridge = PGLearn.bridges(PGLearn.OPFData(network_drop; compute_clique_decomposition=(OPF == PGLearn.SparseSDPOPF)))
     non_bridge = [network_drop["branch"]["$e"] for (e, b) in enumerate(is_bridge) if !b]
     drop_branch = argmin(branch->branch["rate_a"], non_bridge)["index"]
     network_drop["branch"]["$drop_branch"]["br_status"] = 0
@@ -64,7 +64,6 @@ include("quad_obj.jl")
 
         @testset "QuadObj" begin test_quad_obj_warn(OPF) end
     end
-
 
     # SOCOPF
     @testset _test_socwr_DualSolFormat()

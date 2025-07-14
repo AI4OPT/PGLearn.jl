@@ -148,7 +148,8 @@ if abspath(PROGRAM_FILE) == @__FILE__
     # Load reference data and setup OPF sampler
     case_file, case_name = PGLearn._get_case_info(config)
     isfile(case_file) || error("Reference case file not found: $(case_file)")
-    data = PGLearn.OPFData(make_basic_network(PowerModels.parse_file(case_file)))
+    compute_clique_decomposition = "compute_clique_decomposition" in keys(config["OPF"]) ? config["OPF"]["compute_clique_decomposition"] : false
+    data = PGLearn.OPFData(make_basic_network(PowerModels.parse_file(case_file)); compute_clique_decomposition=compute_clique_decomposition)
     opf_sampler = PGLearn.SimpleOPFSampler(data, config["sampler"])
 
     # Data info

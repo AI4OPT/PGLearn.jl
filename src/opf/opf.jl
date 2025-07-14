@@ -63,16 +63,19 @@ mutable struct OPFData
     dvamin::Vector{Float64}  # angle difference min
     dvamax::Vector{Float64}  # angle difference max
     branch_status::Vector{Bool}  # branch status
+
+    # Clique decomposition data for SparseSDPOPF
+    clique_decomposition::Union{Nothing,Vector{Vector{Int}}}
 end
 
 """
-    OPFData(network::Dict{String,Any})
+    OPFData(network::Dict{String,Any}; compute_clique_decomposition::Bool=false)
 
 Convert a PowerModels data dictionary to `OPFData` structure.
 
 The PowerModels data dictionary must be in basic format.
 """
-function OPFData(network::Dict{String,Any})
+function OPFData(network::Dict{String,Any}; compute_clique_decomposition::Bool=false)
     @assert network["basic_network"] "Network data is not in basic format."
     @assert network["per_unit"] == true "Network data is not per-unit scaled."
 
@@ -254,6 +257,12 @@ function OPFData(network::Dict{String,Any})
 
     A = sparse(A_i, A_j, A_v, E, N)
 
+    if compute_clique_decomposition
+        clique_decomposition = instantiate_model(network, SparseSDPWRMPowerModel, PM.build_opf).ext[:SDconstraintDecomposition].decomp
+    else 
+        clique_decomposition = nothing
+    end
+
     return OPFData(
         network["name"], network["baseMVA"],
         N, E, G, L, A, Ag,
@@ -271,6 +280,7 @@ function OPFData(network::Dict{String,Any})
         bff, bft, btf, btt,
         smax, dvamin, dvamax,
         branch_status,
+        clique_decomposition,
     )
 end
 
@@ -334,7 +344,7 @@ const OPF2TYPE = Dict{String,Type{<:AbstractFormulation}}(
 )
 
 function build_opf(OPF::Type{<:AbstractFormulation}, network::Dict, optimizer; kwargs...)
-    return build_opf(OPF, OPFData(network), optimizer; kwargs...)
+    return build_opf(OPF, OPFData(network; compute_clique_decomposition=(OPF == SparseSDPOPF)), optimizer; kwargs...)
 end
 
 function solve!(opf::OPFModel{<:AbstractFormulation})
