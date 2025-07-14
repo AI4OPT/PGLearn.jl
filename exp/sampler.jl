@@ -139,7 +139,7 @@ if abspath(PROGRAM_FILE) == @__FILE__
     end
     @info "Floating-point data will be exported in `$(float_type)`"
 
-    compute_clique_decomposition = "compute_clique_decomposition" in keys(config["sampler"]) ? config["sampler"]["compute_clique_decomposition"] : false
+    compute_clique_decomposition = get(config["sampler"], "compute_clique_decomposition", false)
 
     # Dummy run (for pre-compilation)
     data0 = PGLearn.OPFData(make_basic_network(pglib("pglib_opf_case14_ieee")); compute_clique_decomposition=compute_clique_decomposition)
