@@ -64,7 +64,7 @@ This test is executed on the 5 bus system.
 """
 function _test_sdpwrm_DualFeasibility(OPF::Union{Type{PGLearn.SDPOPF}, Type{PGLearn.SparseSDPOPF}})
     T = Float128
-    data = PGLearn.OPFData(make_basic_network(pglib("5_pjm")); compute_clique_decomposition=true)
+    data = PGLearn.OPFData(make_basic_network(pglib("5_pjm")); compute_clique_decomposition=(OPF == PGLearn.SparseSDPOPF))
     solver = JuMP.optimizer_with_attributes(Clarabel.Optimizer{T},
         "verbose" => true,
         "equilibrate_enable" => false,
@@ -197,7 +197,7 @@ function _test_sdpwrm_DualSolFormat(OPF::Union{Type{PGLearn.SDPOPF}, Type{PGLear
     E = length(data["branch"])
 
     solver = CLRBL_SOLVER_SDP
-    opf = PGLearn.build_opf(OPF, data, solver)
+    opf = PGLearn.build_opf(OPF, data, solver; compute_clique_decomposition=(OPF == PGLearn.SparseSDPOPF))
     set_silent(opf.model)
     PGLearn.solve!(opf)
 

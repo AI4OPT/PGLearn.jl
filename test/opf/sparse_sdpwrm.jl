@@ -15,7 +15,7 @@ function test_opf_pm(::Type{PGLearn.SparseSDPOPF}, data::Dict)
 
     # Build and solve OPF with PGLearn
     solver = OPT_SOLVERS[OPF]
-    opf = PGLearn.build_opf(OPF, data, solver)
+    opf = PGLearn.build_opf(OPF, data, solver; compute_clique_decomposition=true)
     PGLearn.solve!(opf)
     res = PGLearn.extract_result(opf)
 

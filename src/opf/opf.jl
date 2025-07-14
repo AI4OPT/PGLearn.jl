@@ -353,8 +353,8 @@ const OPF2TYPE = Dict{String,Type{<:AbstractFormulation}}(
     "SparseSDPOPF" => SparseSDPOPF,
 )
 
-function build_opf(OPF::Type{<:AbstractFormulation}, network::Dict, optimizer; kwargs...)
-    return build_opf(OPF, OPFData(network; compute_clique_decomposition=(OPF == SparseSDPOPF)), optimizer; kwargs...)
+function build_opf(OPF::Type{<:AbstractFormulation}, network::Dict, optimizer; compute_clique_decomposition::Bool=false, kwargs...)
+    return build_opf(OPF, OPFData(network; compute_clique_decomposition), optimizer; kwargs...)
 end
 
 function solve!(opf::OPFModel{<:AbstractFormulation})
