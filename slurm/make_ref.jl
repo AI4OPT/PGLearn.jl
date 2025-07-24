@@ -12,7 +12,9 @@ function main_ref(config; export_ref=false)
     export_dir = pop!(config, "export_dir")
     pop!(config, "slurm")
 
-    data = PGLearn.OPFData(make_basic_network(PowerModels.parse_file(case_file)); compute_clique_decomposition=get(config["sampler"], "compute_clique_decomposition", false))
+    data = PGLearn.OPFData(make_basic_network(PowerModels.parse_file(case_file));
+        compute_clique_decomposition=get(config["sampler"], "compute_clique_decomposition", false)
+    )
 
     d = main(data, config)
     d["data"] = PGLearn.to_dict(data)
