@@ -95,7 +95,7 @@ The objective function ``\eqref{model:acopf:obj}`` minimizes the cost of active 
 * ``\eqref{model:acopf:slackbus}``: this constraint fixes the voltage angle of the 
     reference (slack) bus to zero.
 * ``\eqref{model:acopf:pgbound}-\eqref{model:acopf:qgbound}``: Active/reactive generation limits
-* ``\eqref{model:acopf:vmbound}``: Nodal voltage angle limits
+* ``\eqref{model:acopf:vmbound}``: Nodal voltage magnitude limits
 * ``\eqref{model:acopf:pfbound}-\eqref{model:acopf:qtbound}``: Power flow bounds, derived from thermal limits
 
 !!! info
