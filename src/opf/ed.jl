@@ -117,6 +117,7 @@ end
 
 
 function solve!(opf::OPFModel{EconomicDispatch}) 
+    maybe_set_ad(opf)
     model = opf.model
 
     data = opf.data
@@ -158,7 +159,7 @@ function solve!(opf::OPFModel{EconomicDispatch})
     t0 = time()
     while !solved && niter < model.ext[:solve_metadata][:max_ptdf_iterations]
         # Solve model
-        optimize!(opf.model, _differentiation_backend = MathOptSymbolicAD.DefaultBackend())
+        optimize!(opf.model)
         
         # Exit if not solved optimally
         st = termination_status(model)
