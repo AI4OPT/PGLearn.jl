@@ -15,6 +15,6 @@ cd {{{:opfgenerator_dir}}}
 
 mkdir app
 
-julia --project=. -t1 --trace-compile=app/precompile.jl {{{:sampler_script}}} {{{:config_file}}} 1 1
+julia --project=exp -t1 --trace-compile=app/precompile.jl {{{:sampler_script}}} {{{:config_file}}} 1 1
 
-julia --project=. slurm/make_sysimage.jl
+julia --project=slurm slurm/make_sysimage.jl
