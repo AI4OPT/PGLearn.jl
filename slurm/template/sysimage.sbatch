@@ -17,4 +17,4 @@ mkdir app
 
 julia --project=exp -t1 --trace-compile=app/precompile.jl {{{:sampler_script}}} {{{:config_file}}} 1 1
 
-julia --project=slurm slurm/make_sysimage.jl
+julia --project=exp slurm/make_sysimage.jl
