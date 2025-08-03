@@ -24,6 +24,18 @@ Create a TOML configuration file with the following options:
 | `slurm.julia_bin` | Julia command to use | No | `julia --sysimage=app/julia.so` |
 | `slurm.env_path` | Path to env script | No | `slurm/template/env.sh` |
 
+
+## Setup
+
+First, make sure to install all dependencies:
+```bash
+# cd path/to/PGLearn.jl
+julia --project=. -e "using Pkg; Pkg.instantiate()"
+julia --project=exp -e "using Pkg; Pkg.instantiate()"
+julia --project=slurm -e "using Pkg; Pkg.instantiate()"
+```
+Then, make sure the `slurm/template/env.sh` file is set up correctly for your environment. You can either edit this file directly or create a new one and specify its path in the configuration file.
+
 ## Usage
 
 1. Create a TOML configuration file with the required options.
