@@ -1,6 +1,6 @@
 # PGLearn SLURM Job Submission and Output Guide
 
-This guide provides instructions on how to use the `submit_jobs.jl` script to submit jobs to a SLURM HPC cluster for generating OPF problem instances with PGLearn, as well as details on the output structure.
+This guide provides instructions on how to use the `create_jobs.jl` script to submit jobs to a SLURM HPC cluster for generating OPF problem instances with PGLearn, as well as details on the output structure.
 
 The script has three dependencies: `julia`, `gcc` (for sysimage), and `parallel` (for sampler). The file `env.sh` in the `slurm/template` directory contains a default environment setup which may need to be changed by the user. The user can either edit this file directly or create a new one and provide the path to it in the configuration file with the `slurm.env_path` option. The script will be sourced (executed in the job's main shell) before running each of the jobs.
 
@@ -24,12 +24,24 @@ Create a TOML configuration file with the following options:
 | `slurm.julia_bin` | Julia command to use | No | `julia --sysimage=app/julia.so` |
 | `slurm.env_path` | Path to env script | No | `slurm/template/env.sh` |
 
+
+## Setup
+
+First, make sure to install all dependencies:
+```bash
+# cd path/to/PGLearn.jl
+julia --project=. -e "using Pkg; Pkg.instantiate()"
+julia --project=exp -e "using Pkg; Pkg.instantiate()"
+julia --project=slurm -e "using Pkg; Pkg.instantiate()"
+```
+Then, make sure the `slurm/template/env.sh` file is set up correctly for your environment. You can either edit this file directly or create a new one and specify its path in the configuration file.
+
 ## Usage
 
 1. Create a TOML configuration file with the required options.
-2. Run the `submit_jobs.jl` script with the path to the configuration file:
+2. Run the `create_jobs.jl` script with the path to the configuration file:
    ```bash
-   julia --project=. slurm/submit_jobs.jl path/to/config.toml
+   julia --project=slurm slurm/create_jobs.jl path/to/config.toml
    ```
 3. Follow the printed instructions to submit the jobs to the SLURM queue.
 4. When submitting slurm jobs, you will be prompted to select whether to (re)-create a julia sysimage
@@ -51,7 +63,7 @@ If you decide to (re)create a sysimage, a specific job will be submitted to the 
 
 The script will organize the intermediate files into the following directories within the specified `export_dir`:
 
-- `slurm`: Contains generated SLURM job files and submission scripts created by the `submit_jobs.jl` script.
+- `slurm`: Contains generated SLURM job files and submission scripts created by the `create_jobs.jl` script.
 - `res_json`: Stores JSON files with individual instance and solution data created during the sampler job.
 - `res_h5`: Stores semi-aggregated HDF5 files created during the extract job.
 
@@ -74,7 +86,7 @@ The final output files will be stored in the `export_dir` directory:
 
 After the job completion, you can use the `cleanup.jl` script to delete the intermediate files. This script will prompt you to confirm the deletion of the `slurm`, `res_json`, and `res_h5` directories. To run the cleanup script, execute:
 ```bash
-julia --project=. slurm/cleanup.jl path/to/config.toml
+julia --project=slurm slurm/cleanup.jl path/to/config.toml
 ```
 You will be asked to confirm the deletion of each directory individually. This will not delete the files in the `export_dir` directory (the final results).
 
