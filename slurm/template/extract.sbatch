@@ -13,4 +13,4 @@
 
 cd {{{:opfgenerator_dir}}}
 
-julia --project=exp -t{{:cpus_per_task}} slurm/merge.jl {{{:config_file}}}
+julia --project=slurm -t{{:cpus_per_task}} slurm/merge.jl {{{:config_file}}}
