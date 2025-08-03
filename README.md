@@ -127,7 +127,7 @@ Make sure to install the required dependencies first:
 ```bash
 # cd path/to/PGLearn.jl
 julia --project=exp -e "using Pkg; Pkg.instantiate()"
-# NOTE: if using Julia version < 1.10, run instead:
+# NOTE: if using Julia version ≤ 1.10, run instead:
 # julia --project=exp -e 'using Pkg; Pkg.develop(path="."); Pkg.instantiate()'
 ```
 
