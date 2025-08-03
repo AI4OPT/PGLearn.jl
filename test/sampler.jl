@@ -325,7 +325,11 @@ function test_sampler_script()
     smin, smax = 1, 4
     
     # setup env for exp
-    @test success(run(setenv(`$(joinpath(Sys.BINDIR, "julia")) --project=exp -e "using Pkg; Pkg.instantiate()"`, dir=joinpath(@__DIR__, ".."))))
+    if VERSION < v"1.11"
+        @test success(run(setenv(`$(joinpath(Sys.BINDIR, "julia")) --project=exp -e 'using Pkg; Pkg.develop(path="."); Pkg.instantiate()'`, dir=joinpath(@__DIR__, ".."))))
+    else
+        @test success(run(setenv(`$(joinpath(Sys.BINDIR, "julia")) --project=exp -e "using Pkg; Pkg.instantiate()"`, dir=joinpath(@__DIR__, ".."))))
+    end
     
     # run sampler script
     proc = run(setenv(`$(joinpath(Sys.BINDIR, "julia")) --project=exp $sampler_script $config_file $smin $smax`, dir=joinpath(@__DIR__, "..")))
