@@ -33,7 +33,17 @@ First, make sure to install all dependencies:
 julia --project=. -e "using Pkg; Pkg.instantiate()"
 julia --project=exp -e "using Pkg; Pkg.instantiate()"
 julia --project=slurm -e "using Pkg; Pkg.instantiate()"
+# NOTE: if using Julia version ≤ 1.10, run instead:
+# julia --project=. -e "using Pkg; Pkg.instantiate()"
+# julia --project=exp -e 'using Pkg; Pkg.develop(path="."); Pkg.instantiate()'
+# julia --project=slurm -e 'using Pkg; Pkg.develop(path="."); Pkg.instantiate()'
 ```
+
+If you're using the HSL linear solvers with Ipopt, make sure to `dev` the `HSL_jll.jl` package you downloaded in the `exp` project:
+```bash
+julia --project=exp -e "using Pkg; Pkg.develop(path=\"path/to/HSL_jll.jl\"); Pkg.precompile()"
+```
+
 Then, make sure the `slurm/template/env.sh` file is set up correctly for your environment. You can either edit this file directly or create a new one and specify its path in the configuration file.
 
 ## Usage
