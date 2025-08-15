@@ -117,6 +117,7 @@ end
 
 
 function solve!(opf::OPFModel{EconomicDispatch}) 
+    maybe_set_ad(opf)
     model = opf.model
 
     data = opf.data
