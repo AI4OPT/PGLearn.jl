@@ -12,7 +12,6 @@ create_sysimage(
         "MKL",
         "Mosek",
         "MosekTools",
-        "PackageCompiler",
         "PGLearn",
         "PGLib",
         "Pkg",
