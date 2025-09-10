@@ -20,12 +20,18 @@ function convert_float_data(D, F)
 
     for (k, v) in D
         if isa(v, Dict)
+            # recursively convert child
             d[k] = convert_float_data(v, F)
+        elseif isa(v, Complex{<:AbstractFloat})
+            d[k] = convert(Complex{F}, v)
         elseif isa(v, AbstractFloat)
             d[k] = convert(F, v)
         elseif isa(v, Array{T,N} where {T <: AbstractFloat, N})
             d[k] = convert(Array{F,ndims(v)}, v)
+        elseif isa(v, Array{Complex{T},N} where {T <: AbstractFloat, N})
+            d[k] = convert(Array{Complex{F},ndims(v)}, v)
         else
+            # don't convert
             d[k] = v
         end
     end
