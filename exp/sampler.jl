@@ -18,8 +18,6 @@ using HiGHS
 using HSL_jll
 const LIB_COINHSL = HSL_jll.libhsl_path
 
-using MathOptSymbolicAD
-
 using PGLearn
 
 const DEFAULT_FLOAT_PRECISION = Float32
