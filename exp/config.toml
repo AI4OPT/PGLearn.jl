@@ -91,7 +91,7 @@ solver.attributes.iterative_refinement_abstol = 1e-18
 
 [slurm]
 # SLURM options
-n_samples = 65536
-n_jobs = 45
-queue = "embers"
-charge_account = "gts-phentenryck3-ai4opt"
+n_samples = 100
+n_jobs = 5
+queue = "<qos here>"
+charge_account = "<charge account here>"
