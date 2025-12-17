@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-      - /^release-.*$/
+      - release-*
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
@@ -16,7 +16,6 @@ jobs:
         with:
           version: '1'
           arch: x64
-      - uses: julia-actions/cache@v2
       - name: Install dependencies
         run: julia --project=. -e 'using Pkg; Pkg.instantiate()'
       - name: Create precompile statements
