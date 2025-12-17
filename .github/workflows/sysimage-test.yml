@@ -1,0 +1,78 @@
+name: Sysimage Test
+on:
+  push:
+    branches:
+      - main
+      - /^release-.*$/
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  sysimage:
+    name: Test Sysimage Creation and Usage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+          arch: x64
+      - uses: julia-actions/cache@v2
+      - name: Install dependencies
+        run: julia --project=. -e 'using Pkg; Pkg.instantiate()'
+      - name: Create precompile statements
+        run: |
+          mkdir -p app
+          julia --project=. -t1 --trace-compile=app/precompile.jl exp/sampler.jl exp/config.toml 1 1 || true
+      - name: Create sysimage
+        run: julia --project=. -t8 slurm/make_sysimage.jl
+      - name: Verify sysimage exists
+        run: |
+          if [ ! -f app/julia.so ]; then
+            echo "ERROR: Sysimage was not created at app/julia.so"
+            exit 1
+          fi
+          echo "Sysimage created successfully at app/julia.so"
+          ls -lh app/julia.so
+      - name: Test sysimage with simple script
+        run: |
+          julia --project=. --sysimage=app/julia.so -e '
+            using PGLearn
+            using PowerModels
+            using JuMP
+            using Ipopt
+            using Clarabel
+            using HiGHS
+            println("Successfully loaded all packages from sysimage")
+            println("PGLearn module: ", PGLearn)
+          '
+      - name: Test sysimage with actual computation
+        run: |
+          julia --project=. --sysimage=app/julia.so -e '
+            using PGLearn
+            using PowerModels
+            using PGLib
+            using JuMP
+            using Ipopt
+            
+            # Load a small test case
+            case = PGLib.make_pglib_case("pglib_opf_case14_ieee.m")
+            
+            # Create a simple OPF model
+            pm = instantiate_model(case, ACPPowerModel, PowerModels.build_opf)
+            
+            # Set solver
+            set_optimizer(pm.model, Ipopt.Optimizer)
+            set_optimizer_attribute(pm.model, "print_level", 0)
+            
+            # Solve
+            optimize!(pm.model)
+            
+            # Check solution
+            if termination_status(pm.model) == LOCALLY_SOLVED
+                println("Successfully solved OPF with sysimage!")
+                println("Objective value: ", objective_value(pm.model))
+            else
+                println("WARNING: OPF did not solve to optimality")
+                exit(1)
+            end
+          '
