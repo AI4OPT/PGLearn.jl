@@ -1,10 +1,6 @@
 using Base.Iterators
 using Base.Threads
-try
-    using Mustache
-catch
-    error("Make sure you are using --project=., not --project=slurm for creating jobs.")
-end
+using Mustache
 using Pkg
 using TOML
 
