@@ -10,6 +10,8 @@ jobs:
   sysimage:
     name: Test Sysimage Creation and Usage
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v6
       - uses: julia-actions/setup-julia@v2
