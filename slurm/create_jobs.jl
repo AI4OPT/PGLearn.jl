@@ -1,10 +1,6 @@
 using Base.Iterators
 using Base.Threads
-try
-    using Mustache
-catch
-    error("Make sure you are using --project=slurm, not --project=. for creating jobs.")
-end
+using Mustache
 using Pkg
 using TOML
 
@@ -57,7 +53,7 @@ for (j, seed_range) in enumerate(jobs)
     open(joinpath(jobs_dir, "jobs_$j.txt"), "w") do io
         for minibatch in partition(seed_range, b)
             smin, smax = extrema(minibatch)
-            println(io, "$(julia_bin) --project=exp -t1 $(sampler_script) $(config_file) $(smin) $(smax) > $(logs_dir)/$(case_name)_$(smin)-$(smax).log 2>&1")
+            println(io, "$(julia_bin) --project=. -t1 $(sampler_script) $(config_file) $(smin) $(smax) > $(logs_dir)/$(case_name)_$(smin)-$(smax).log 2>&1")
         end
     end
 end

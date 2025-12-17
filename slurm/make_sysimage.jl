@@ -1,6 +1,6 @@
 using PackageCompiler
 
-# first run `julia --project=exp -t1 --trace-compile=app/precompile.jl exp/sampler.jl <path/to/config.toml> 1 1`
+# first run `julia --project=. -t1 --trace-compile=app/precompile.jl exp/sampler.jl <path/to/config.toml> 1 1`
 create_sysimage(
     [
         "Clarabel",

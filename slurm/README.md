@@ -31,17 +31,11 @@ First, make sure to install all dependencies:
 ```bash
 # cd path/to/PGLearn.jl
 julia --project=. -e "using Pkg; Pkg.instantiate()"
-julia --project=exp -e "using Pkg; Pkg.instantiate()"
-julia --project=slurm -e "using Pkg; Pkg.instantiate()"
-# NOTE: if using Julia version ≤ 1.10, run instead:
-# julia --project=. -e "using Pkg; Pkg.instantiate()"
-# julia --project=exp -e 'using Pkg; Pkg.develop(path="."); Pkg.instantiate()'
-# julia --project=slurm -e 'using Pkg; Pkg.develop(path="."); Pkg.instantiate()'
 ```
 
-If you're using the HSL linear solvers with Ipopt, make sure to `dev` the `HSL_jll.jl` package you downloaded in the `exp` project:
+If you're using the HSL linear solvers with Ipopt, make sure to `dev` the `HSL_jll.jl` package you downloaded:
 ```bash
-julia --project=exp -e "using Pkg; Pkg.develop(path=\"path/to/HSL_jll.jl\"); Pkg.precompile()"
+julia --project=. -e "using Pkg; Pkg.develop(path=\"path/to/HSL_jll.jl\"); Pkg.precompile()"
 ```
 
 Then, make sure the `slurm/template/env.sh` file is set up correctly for your environment. You can either edit this file directly or create a new one and specify its path in the configuration file.
@@ -51,7 +45,7 @@ Then, make sure the `slurm/template/env.sh` file is set up correctly for your en
 1. Create a TOML configuration file with the required options.
 2. Run the `create_jobs.jl` script with the path to the configuration file:
    ```bash
-   julia --project=slurm slurm/create_jobs.jl path/to/config.toml
+   julia --project=. slurm/create_jobs.jl path/to/config.toml
    ```
 3. Follow the printed instructions to submit the jobs to the SLURM queue.
 4. When submitting slurm jobs, you will be prompted to select whether to (re)-create a julia sysimage
@@ -96,7 +90,7 @@ The final output files will be stored in the `export_dir` directory:
 
 After the job completion, you can use the `cleanup.jl` script to delete the intermediate files. This script will prompt you to confirm the deletion of the `slurm`, `res_json`, and `res_h5` directories. To run the cleanup script, execute:
 ```bash
-julia --project=slurm slurm/cleanup.jl path/to/config.toml
+julia --project=. slurm/cleanup.jl path/to/config.toml
 ```
 You will be asked to confirm the deletion of each directory individually. This will not delete the files in the `export_dir` directory (the final results).
 
