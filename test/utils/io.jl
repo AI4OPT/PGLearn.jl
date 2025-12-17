@@ -89,7 +89,7 @@ function test_h5_invalid_types()
 
     # Not converting JuMP status codes to String is a common mistale...
     st = MOI.OPTIMAL
-    msg = "Unsupported data type for writing to an HDF5 group: \"termination_status\"::MathOptInterface.TerminationStatusCode."
+    msg = "Unsupported data type for writing to an HDF5 group: \"termination_status\"::TerminationStatusCode."
     @test_throws msg PGLearn.save_h5(f5, Dict("termination_status" => st))
 
     return nothing
