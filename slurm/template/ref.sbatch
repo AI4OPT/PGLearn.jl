@@ -13,4 +13,4 @@
 
 cd {{{:opfgenerator_dir}}}
 
-julia --project=exp -t1 {{{:opfgenerator_dir}}}/slurm/make_ref.jl {{{:config_file}}}
+julia --project=. -t1 {{{:opfgenerator_dir}}}/slurm/make_ref.jl {{{:config_file}}}
