@@ -123,6 +123,11 @@ dataset = [
 ## Generating datasets
 
 A script for generating multiple ACOPF instances is given in [`exp/sampler.jl`](exp/sampler.jl).
+Make sure to install the required dependencies first:
+```bash
+# cd path/to/PGLearn.jl
+julia --project=. -e "using Pkg; Pkg.instantiate()"
+```
 
 It is called from the command-line as follows:
 ```bash
