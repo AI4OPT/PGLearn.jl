@@ -323,11 +323,6 @@ function test_sampler_script()
 
     case_file, case_name = PGLearn._get_case_info(config)
     smin, smax = 1, 4
-    
-    # setup env for exp
-    @test success(run(setenv(`$(joinpath(Sys.BINDIR, "julia")) --project=. -e "using Pkg; Pkg.instantiate()"`, dir=joinpath(@__DIR__, ".."))))
-    
-    # run sampler script
     proc = run(setenv(`$(joinpath(Sys.BINDIR, "julia")) --project=. $sampler_script $config_file $smin $smax`, dir=joinpath(@__DIR__, "..")))
 
     @test success(proc)
