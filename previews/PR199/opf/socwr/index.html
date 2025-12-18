@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>SOC-OPF · PGLearn</title><meta name="title" content="SOC-OPF · PGLearn"/><meta property="og:title" content="SOC-OPF · PGLearn"/><meta property="twitter:title" content="SOC-OPF · PGLearn"/><meta name="description" content="Documentation for PGLearn."/><meta property="og:description" content="Documentation for PGLearn."/><meta property="twitter:description" content="Documentation for PGLearn."/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/wider.css" rel="stylesheet" type="text/css"/><link href="../../assets/redlinks.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../">PGLearn</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Manual</span><ul><li><input class="collapse-toggle" id="menuitem-2-1" type="checkbox" checked/><label class="tocitem" for="menuitem-2-1"><span class="docs-label">Problem formulations</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../notations/">Notations</a></li><li><a class="tocitem" href="../acp/">AC-OPF</a></li><li><a class="tocitem" href="../sdpwrm/">SDP-OPF</a></li><li class="is-active"><a class="tocitem" href>SOC-OPF</a><ul class="internal"><li><a class="tocitem" href="#Mathematical-formulation"><span>Mathematical formulation</span></a></li><li><a class="tocitem" href="#Data-format"><span>Data format</span></a></li></ul></li><li><a class="tocitem" href="../dcp/">DC-OPF</a></li></ul></li><li><a class="tocitem" href="../../io/">I/O utilities</a></li></ul></li><li><a class="tocitem" href="../../lib/public/">Reference</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Manual</a></li><li><a class="is-disabled">Problem formulations</a></li><li class="is-active"><a href>SOC-OPF</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>SOC-OPF</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/AI4OPT/PGLearn.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/AI4OPT/PGLearn.jl/blob/main/docs/src/opf/socwr.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="SOC-OPF"><a class="docs-heading-anchor" href="#SOC-OPF">SOC-OPF</a><a id="SOC-OPF-1"></a><a class="docs-heading-anchor-permalink" href="#SOC-OPF" title="Permalink"></a></h1><p>The SOC-OPF model considered in PGLearn is presented below.</p><h3 id="Definitions"><a class="docs-heading-anchor" href="#Definitions">Definitions</a><a id="Definitions-1"></a><a class="docs-heading-anchor-permalink" href="#Definitions" title="Permalink"></a></h3><p>The <em>second order cone</em> and <em>rotated second-order cone</em> of order <span>$n$</span> are defined as</p><p class="math-container">\[\begin{align*}
+\mathcal{Q}^{n} &amp;= \left\{
+    x \in \mathbb{R}^{n}   
+\ \middle| \
+    x_{1} \geq \sqrt{x_{2}^{2} + ... + x_{n}^{2}}
+\right\}\\
+\mathcal{Q}_{r}^{n} &amp;= \left\{
+    x \in \mathbb{R}^{n}   
+\ \middle| \
+    2 x_{1} x_{2} \geq x_{3}^{2} + ... + x_{n}^{2},
+    x_{1}, x_{2} \geq 0
+\right\}.
+\end{align*}\]</p><h2 id="Mathematical-formulation"><a class="docs-heading-anchor" href="#Mathematical-formulation">Mathematical formulation</a><a id="Mathematical-formulation-1"></a><a class="docs-heading-anchor-permalink" href="#Mathematical-formulation" title="Permalink"></a></h2><p>The SOC-OPF formulation in PGLearn is the Jabr relaxation of AC-OPF. The formulation is obtained through the change of variable</p><p class="math-container">\[\begin{align*}
+\wm_{i} &amp;= \VM_{i}^{2} 
+    &amp;&amp; \forall i \in \NODES \\
+\wr_{e} &amp;= \VM_{i} \VM_{j} \cos (\theta_{i} - \theta_{j}) 
+    &amp;&amp; \forall e = (i, j) \in \EDGES \\
+\wi_{e} &amp;= \VM_{i} \VM_{j} \sin (\theta_{i} - \theta_{j}) 
+    &amp;&amp; \forall e = (i, j) \in \EDGES
+\end{align*}\]</p><p>Note that <span>$\wr_{e}$</span> and <span>$\wi_{e}$</span> correspond to  the real and imaginary parts of the complex voltage product <span>$V_{i}V_{j}^{*}$</span>, respectively. This transformation implies the non-convex equality</p><p class="math-container">\[(\wr)^{2} + (\wi)^{2} = \VM_{i}^{2} \times \VM_{j}^{2} = \wm_{i} \times \wm_{j}\]</p><p>The Jabr relaxation is obtained by relaxing this into the convex constraint</p><p class="math-container">\[(\wr)^{2} + (\wi)^{2} \leq \wm_{i} \times \wm_{j}\]</p><p>The resulting SOC-OPF model is presented below.</p><p class="math-container">\[\begin{align}
+    \min \quad 
+    &amp; \label{eq:SOCOPF:objective}
+        \sum_{i \in \NODES} \sum_{j \in \GENERATORS_{i}} c_j \PG_j + c_0\\
+    \text{s.t.} \quad
+    &amp; \label{eq:SOCOPF:kcl_p}
+        \sum_{g \in \GENERATORS_i} \PG_g
+        - \sum_{e \in \EDGES^{+}_{i}} \PF_{e}
+        - \sum_{e \in \EDGES^{-}_{i}} \PT_{e}
+        - \GS_i \wm_{i}
+        = \sum_{j\in\LOADS_i} \PD_j
+        &amp; \forall i &amp; \in \NODES
+        % &amp;&amp; [\lambda^{p}]
+        \\
+    &amp; \label{eq:SOCOPF:kcl_q}
+        \sum_{g \in \GENERATORS_{i}} \QG_{g}
+        - \sum_{e \in \EDGES^{+}_{i}} \QF_{e}
+        - \sum_{e \in \EDGES^{-}_{i}} \QT_{e}
+        + \BS_{i} \wm_{i}
+        = \sum_{j\in\LOADS_i} \QD_j
+        &amp; \forall i &amp; \in \NODES
+        % &amp;&amp; [\lambda^{q}]
+        \\
+    % Ohm&#39;s law
+    &amp; \label{eq:SOCOPF:ohm_pf}
+        \gff_{e} \wm_{i}
+        + \gft_{e} \wr_{e}
+        + \bft_{e} \wi_{e}
+        - \PF_{e} = 0
+        &amp; \forall e = (i,j) &amp; \in \EDGES
+        % &amp;&amp; [\lambda^{pf}]
+        \\
+    &amp; \label{eq:SOCOPF:ohm_qf}
+        -\bff_{e} \wm_{i}
+        - \bft_{e} \wr_{e}
+        + \gft_{e} \wi_{e}
+        - \QF_{e} = 0
+        &amp; \forall e = (i,j) &amp; \in \EDGES
+        % &amp;&amp; [\lambda^{qf}]
+        \\
+    &amp; \label{eq:SOCOPF:ohm_pt}
+        \gtt_{e} \wm_{j}
+        + \gtf_{e} \wr_{e}
+        - \btf_{e} \wi_{e}
+        - \PT_{e} = 0
+        &amp; \forall e = (i,j) &amp; \in \EDGES
+        % &amp;&amp; [\lambda^{pt}]
+        \\
+    &amp; \label{eq:SOCOPF:ohm_qt}
+        -\btt_{e} \wm_{j}
+        - \btf_{e} \wr_{e}
+        - \gtf_{e} \wi_{e}
+        - \QT_{e} = 0
+        &amp; \forall e = (i,j) &amp; \in \EDGES
+        % &amp;&amp; [\lambda^{qt}]
+        \\
+    % Jabr constraints
+    &amp; \label{eq:SOCOPF:jabr}
+        \left(
+            \frac{\wm_{i}}{\sqrt{2}},
+            \frac{\wm_{j}}{\sqrt{2}},
+            \wr_{e},
+            \wi_{e}
+        \right)
+        \in \mathcal{Q}_{r}^{4}
+        &amp; \forall e = (i,j) &amp; \in \EDGES
+        % &amp;&amp; [\omega]
+        \\
+    % Thermal limits
+    &amp; \label{eq:SOCOPF:sm_f}
+        (\overline{S}_{e}, \PF_{e}, \QF_{e})
+        \in \mathcal{Q}^{3}
+        &amp; \forall e &amp; \in \EDGES
+        % &amp;&amp; [\nu^{f}]
+        \\
+    &amp; \label{eq:SOCOPF:sm_t}
+        (\overline{S}_{e}, \PT_{e}, \QT_{e})
+        \in \mathcal{Q}^{3}
+        &amp; \forall e &amp; \in \EDGES
+        % &amp;&amp; [\nu^{t}]
+        \\
+    % Voltage angle deviation
+    &amp; \label{eq:SOCOPF:va_diff}
+        \tan(\dvamin_{e}) \wr_{e} \leq \wi_{e} \leq \tan(\dvamax_{e}) \wr_{e}
+        &amp; \forall e &amp; \in \EDGES
+        % &amp;&amp; [\mu^{\Delta \theta}]
+        \\
+    % Variable bounds
+    &amp; \label{eq:SOCOPF:pg_bounds}
+        \pgmin_{i} \leq \PG_{i} \leq \pgmax_{i}, 
+        &amp; \forall i &amp; \in \GENERATORS
+        % &amp;&amp; [\mu^{pg}]
+        \\
+    &amp; \label{eq:SOCOPF:qg_bounds}
+        \qgmin_{i} \leq \QG_{i} \leq \qgmax_{i},
+        &amp; \forall i &amp; \in \GENERATORS
+        % &amp;&amp; [\mu^{qg}]
+        \\
+    &amp; \label{eq:SOCOPF:wm_bounds}
+        \vmmin_{i}^{2} \leq \wm_{i} \leq \vmmax_{i}^{2}, 
+        &amp; \forall i &amp; \in \NODES
+        % &amp;&amp; [\mu^{w}]
+        \\ 
+    &amp; \label{eq:SOCOPF:wr_bounds}
+        \wrmin_{e} \leq \wr_{e} \leq \wrmax_{e}
+        &amp; \forall e &amp; \in \EDGES
+        % &amp;&amp; [\mu^{wr}]
+        \\
+    &amp; \label{eq:SOCOPF:wi_bounds}
+        \wimin_{e} \leq \wi_{e} \leq \wimax_{e}
+        &amp; \forall e &amp; \in \EDGES
+        % &amp;&amp; [\mu^{wi}]
+        \\
+    &amp; \label{eq:SOCOPF:pf_bounds}
+        {-}\overline{S}_{e} \leq \PF_{e} \leq \overline{S}_{e}
+        &amp; \forall e &amp; \in \EDGES
+        % &amp;&amp; [\mu^{pf}]
+        \\
+    &amp; \label{eq:SOCOPF:qf_bounds}
+        {-}\overline{S}_{e} \leq \QF_{e} \leq \overline{S}_{e}
+        &amp; \forall e &amp; \in \EDGES
+        % &amp;&amp; [\mu^{qf}]
+        \\
+    &amp; \label{eq:SOCOPF:pt_bounds}
+        {-}\overline{S}_{e} \leq \PT_{e} \leq \overline{S}_{e}
+        &amp; \forall e &amp; \in \EDGES
+        % % &amp;&amp; [\mu^{pt}]
+        \\
+    &amp; \label{eq:SOCOPF:qt_bounds}
+        {-}\overline{S}_{e} \leq \QT_{e} \leq \overline{S}_{e}
+        &amp; \forall e &amp; \in \EDGES
+        % &amp;&amp; [\mu^{qt}]
+\end{align}\]</p><h3 id="Variables"><a class="docs-heading-anchor" href="#Variables">Variables</a><a id="Variables-1"></a><a class="docs-heading-anchor-permalink" href="#Variables" title="Permalink"></a></h3><ul><li><span>$\wm \in \mathbb{R}^{N}$</span>: squared nodal voltage magnitude</li><li><span>$\PG \in \mathbb{R}^{G}$</span>: active power dispatch</li><li><span>$\QG \in \mathbb{R}^{G}$</span>: reactive power dispatch</li><li><span>$\wr \in \mathbb{R}^{E}$</span>: real part of voltage product</li><li><span>$\wi \in \mathbb{R}^{E}$</span>: imaginary part of voltage product</li><li><span>$\PF \in \mathbb{R}^{E}$</span>: active power flow &quot;from&quot;</li><li><span>$\QF \in \mathbb{R}^{E}$</span>: reactive power flow &quot;from&quot;</li><li><span>$\PT \in \mathbb{R}^{E}$</span>: active power flow &quot;to&quot;</li><li><span>$\QT \in \mathbb{R}^{E}$</span>: reactive power flow &quot;to&quot;</li></ul><h3 id="Objective"><a class="docs-heading-anchor" href="#Objective">Objective</a><a id="Objective-1"></a><a class="docs-heading-anchor-permalink" href="#Objective" title="Permalink"></a></h3><p>The objective function <span>$\eqref{eq:SOCOPF:objective}$</span> minimizes the cost of active power generation.</p><div class="admonition is-todo" id="Todo-e3e5c4c04ed1d04f"><header class="admonition-header">Todo<a class="admonition-anchor" href="#Todo-e3e5c4c04ed1d04f" title="Permalink"></a></header><div class="admonition-body"><p>PGLearn currently supports only linear cost functions. Support for quadratic functions is planned for a later stage; please open an issue if  you would like to request this feature.</p></div></div><h3 id="Constraints"><a class="docs-heading-anchor" href="#Constraints">Constraints</a><a id="Constraints-1"></a><a class="docs-heading-anchor-permalink" href="#Constraints" title="Permalink"></a></h3><ul><li><span>$\eqref{eq:SOCOPF:kcl_p}-\eqref{eq:SOCOPF:kcl_q}$</span>:   Kirchhoff&#39;s current law for active and reactive power</li><li><span>$\eqref{eq:SOCOPF:ohm_pf}-\eqref{eq:SOCOPF:ohm_qt}$</span>:   Ohm&#39;s law for active/reactive power flows in <em>from</em> and <em>to</em> directions</li><li><span>$\eqref{eq:SOCOPF:jabr}$</span>: Jabr constraint</li><li><span>$\eqref{eq:SOCOPF:sm_f}-\eqref{eq:SOCOPF:sm_t}$</span>: thermal limits</li><li><span>$\eqref{eq:SOCOPF:va_diff}$</span>: voltage angle deviation constraints</li><li><span>$\eqref{eq:SOCOPF:pg_bounds}-\eqref{eq:SOCOPF:qg_bounds}$</span>: active/reactive generation limits</li><li><span>$\eqref{eq:SOCOPF:wm_bounds}$</span>: bounds on squared voltage magnitude</li><li><span>$\eqref{eq:SOCOPF:wr_bounds}-\eqref{eq:SOCOPF:wi_bounds}$</span>: bounds on voltage product variables</li><li><span>$\eqref{eq:SOCOPF:pf_bounds}-\eqref{eq:SOCOPF:qt_bounds}$</span>: power flow bounds, derived from thermal limits</li></ul><div class="admonition is-info" id="Info-eb4d0e7c24690830"><header class="admonition-header">Info<a class="admonition-anchor" href="#Info-eb4d0e7c24690830" title="Permalink"></a></header><div class="admonition-body"><p>Although power flow variable bounds<span>$\eqref{eq:SOCOPF:pf_bounds}-\eqref{eq:SOCOPF:qt_bounds}$</span> are redundant with thermal limits <span>$\eqref{eq:SOCOPF:sm_f}-\eqref{eq:SOCOPF:sm_t}$</span>,  their inclusion improves the performance of interior-point solvers like Ipopt.</p></div></div><div class="admonition is-success" id="Tip-aaedaf3dfbf68a45"><header class="admonition-header">Tip<a class="admonition-anchor" href="#Tip-aaedaf3dfbf68a45" title="Permalink"></a></header><div class="admonition-body"><p>When using the <code>SOCOPF</code> formulation, all convex quadratic are passed to the solver in conic form. To use quadratic form, e.g., when using a solver that doesn&#39;t support conic constraints, use <code>SOCOPFQuad</code>.</p><div class="admonition is-warning" id="Warning-dd102068c46757d3"><header class="admonition-header">Warning<a class="admonition-anchor" href="#Warning-dd102068c46757d3" title="Permalink"></a></header><div class="admonition-body"><p>The <code>SOCOPFQuad</code> formulation does not support conic duality.</p></div></div></div></div><h2 id="Data-format"><a class="docs-heading-anchor" href="#Data-format">Data format</a><a id="Data-format-1"></a><a class="docs-heading-anchor-permalink" href="#Data-format" title="Permalink"></a></h2><h3 id="Primal-solution"><a class="docs-heading-anchor" href="#Primal-solution">Primal solution</a><a id="Primal-solution-1"></a><a class="docs-heading-anchor-permalink" href="#Primal-solution" title="Permalink"></a></h3><table><tr><th style="text-align: left">Variable</th><th style="text-align: left">Data</th><th style="text-align: left">Size</th><th style="text-align: left">Description</th></tr><tr><td style="text-align: left"><span>$\mathbf{w}$</span></td><td style="text-align: left"><code>w</code></td><td style="text-align: left"><span>$N$</span></td><td style="text-align: left">Squared nodal voltage magnitude</td></tr><tr><td style="text-align: left"><span>$\PG$</span></td><td style="text-align: left"><code>pg</code></td><td style="text-align: left"><span>$G$</span></td><td style="text-align: left">Active power generation</td></tr><tr><td style="text-align: left"><span>$\QG$</span></td><td style="text-align: left"><code>qg</code></td><td style="text-align: left"><span>$G$</span></td><td style="text-align: left">Reactive power generation</td></tr><tr><td style="text-align: left"><span>$\wr$</span></td><td style="text-align: left"><code>wr</code></td><td style="text-align: left"><span>$E$</span></td><td style="text-align: left">Voltage product variable (real part)</td></tr><tr><td style="text-align: left"><span>$\wi$</span></td><td style="text-align: left"><code>wi</code></td><td style="text-align: left"><span>$E$</span></td><td style="text-align: left">Voltage product variable (imaginary part)</td></tr><tr><td style="text-align: left"><span>$\PF$</span></td><td style="text-align: left"><code>pf</code></td><td style="text-align: left"><span>$E$</span></td><td style="text-align: left">Active power flow (from)</td></tr><tr><td style="text-align: left"><span>$\PT$</span></td><td style="text-align: left"><code>pt</code></td><td style="text-align: left"><span>$E$</span></td><td style="text-align: left">Active power flow (to)</td></tr><tr><td style="text-align: left"><span>$\QF$</span></td><td style="text-align: left"><code>qf</code></td><td style="text-align: left"><span>$E$</span></td><td style="text-align: left">Reactive power flow (from)</td></tr><tr><td style="text-align: left"><span>$\QT$</span></td><td style="text-align: left"><code>qt</code></td><td style="text-align: left"><span>$E$</span></td><td style="text-align: left">Reactive power flow (to)</td></tr></table><h3 id="Dual-solution"><a class="docs-heading-anchor" href="#Dual-solution">Dual solution</a><a id="Dual-solution-1"></a><a class="docs-heading-anchor-permalink" href="#Dual-solution" title="Permalink"></a></h3><table><tr><th style="text-align: left">Constraint</th><th style="text-align: left">Data</th><th style="text-align: left">Size</th></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:kcl_p}$</span></td><td style="text-align: left"><code>kcl_p</code></td><td style="text-align: left"><span>$N$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:kcl_q}$</span></td><td style="text-align: left"><code>kcl_q</code></td><td style="text-align: left"><span>$N$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:ohm_pf}$</span></td><td style="text-align: left"><code>ohm_pf</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:ohm_qf}$</span></td><td style="text-align: left"><code>ohm_qf</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:ohm_pt}$</span></td><td style="text-align: left"><code>ohm_pt</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:ohm_qt}$</span></td><td style="text-align: left"><code>ohm_qt</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:jabr}$</span></td><td style="text-align: left"><code>jabr</code></td><td style="text-align: left"><span>$E \times 4$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:sm_f}$</span></td><td style="text-align: left"><code>sm_fr</code></td><td style="text-align: left"><span>$E \times 3$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:sm_t}$</span></td><td style="text-align: left"><code>sm_to</code></td><td style="text-align: left"><span>$E \times 3$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:va_diff}$</span></td><td style="text-align: left"><code>va_diff</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:pg_bounds}$</span></td><td style="text-align: left"><code>pg</code></td><td style="text-align: left"><span>$G$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:qg_bounds}$</span></td><td style="text-align: left"><code>qg</code></td><td style="text-align: left"><span>$G$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:wm_bounds}$</span></td><td style="text-align: left"><code>w</code></td><td style="text-align: left"><span>$N$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:wr_bounds}$</span></td><td style="text-align: left"><code>wr</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:wi_bounds}$</span></td><td style="text-align: left"><code>wi</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:pf_bounds}$</span></td><td style="text-align: left"><code>pf</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:qf_bounds}$</span></td><td style="text-align: left"><code>qf</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:pt_bounds}$</span></td><td style="text-align: left"><code>pt</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SOCOPF:qt_bounds}$</span></td><td style="text-align: left"><code>qt</code></td><td style="text-align: left"><span>$E$</span></td></tr></table></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../sdpwrm/">« SDP-OPF</a><a class="docs-footer-nextpage" href="../dcp/">DC-OPF »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Wednesday 17 December 2025 23:38">Wednesday 17 December 2025</span>. Using Julia version 1.12.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
