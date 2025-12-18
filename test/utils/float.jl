@@ -10,6 +10,13 @@ function test_float_conversion()
         ),
         "e" => "hello, world!",
         "f" => [1, 2, 3],
+        "g" => Complex{Float64}(1.0, 2.0),
+        "h" => [Complex{Float64}(1.1, 2.1), Complex{Float64}(1.2, 2.2)],
+        "i" => Dict(
+            "i1" => ones(Complex{BigFloat}, (1,)),
+            "i2" => ones(Complex{BigFloat}, (1,2)),
+            "i3" => ones(Complex{BigFloat}, (3,1,2)),
+        ),
     )
 
     # Test Float32 conversion
@@ -31,6 +38,18 @@ function test_float_conversion()
     @test d32["d"]["d3"] == ones(Float32, (3,1,2))
     @test d32["e"] === D["e"]
     @test d32["f"] === D["f"]
+    @test isa(d32["g"], Complex{Float32})
+    @test d32["g"] == Complex{Float32}(1.0, 2.0)
+    @test isa(d32["h"], Array{Complex{Float32},1})
+    @test d32["h"] == [Complex{Float32}(1.1, 2.1), Complex{Float32}(1.2, 2.2)]
+    @test isa(d32["i"], Dict{String,Any})
+    @test length(d32["i"]) == 3
+    @test isa(d32["i"]["i1"], Array{Complex{Float32},1})
+    @test d32["i"]["i1"] == ones(Complex{Float32}, (1,))
+    @test isa(d32["i"]["i2"], Array{Complex{Float32},2})
+    @test d32["i"]["i2"] == ones(Complex{Float32}, (1,2))
+    @test isa(d32["i"]["i3"], Array{Complex{Float32},3})
+    @test d32["i"]["i3"] == ones(Complex{Float32}, (3,1,2))
 
     # Test Float64 conversion
     d64 = PGLearn.convert_float_data(D, Float64)
@@ -48,6 +67,18 @@ function test_float_conversion()
     @test d64["d"]["d3"] == ones(Float64, (3,1,2))
     @test d64["e"] === D["e"]
     @test d64["f"] === D["f"]
+    @test isa(d64["g"], Complex{Float64})
+    @test d64["g"] === D["g"]
+    @test isa(d64["h"], Array{Complex{Float64},1})
+    @test d64["h"] === D["h"]
+    @test isa(d64["i"], Dict{String,Any})
+    @test length(d64["i"]) == 3
+    @test isa(d64["i"]["i1"], Array{Complex{Float64},1})
+    @test d64["i"]["i1"] == ones(Complex{Float64}, (1,))
+    @test isa(d64["i"]["i2"], Array{Complex{Float64},2})
+    @test d64["i"]["i2"] == ones(Complex{Float64}, (1,2))
+    @test isa(d64["i"]["i3"], Array{Complex{Float64},3})
+    @test d64["i"]["i3"] == ones(Complex{Float64}, (3,1,2))
 
     # Test argument sanity checks
     @test_throws ErrorException PGLearn.convert_float_data(Dict{Int,Any}(), Float32)
