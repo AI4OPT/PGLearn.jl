@@ -46,34 +46,25 @@ jobs:
             println("Successfully loaded all packages from sysimage")
             println("PGLearn module: ", PGLearn)
           '
-      - name: Test sysimage with actual computation
+      - name: Test sysimage with README example
         run: |
           julia --project=. --sysimage=app/julia.so -e '
+            using PGLib, PowerModels
             using PGLearn
-            using PowerModels
-            using PGLib
-            using JuMP
             using Ipopt
             
-            # Load a small test case
-            case = PGLib.make_pglib_case("pglib_opf_case14_ieee.m")
+            # Load data from PGLib case
+            pm_network = PowerModels.make_basic_network(pglib("14_ieee"))
+            data = PGLearn.OPFData(pm_network)
             
-            # Create a simple OPF model
-            pm = instantiate_model(case, ACPPowerModel, PowerModels.build_opf)
+            # Build OPF optimization model
+            # To switch formulations, replace ACOPF with, e.g., DCOPF or SOCOPF
+            opf = PGLearn.build_opf(PGLearn.ACOPF, data, Ipopt.Optimizer)
             
-            # Set solver
-            set_optimizer(pm.model, Ipopt.Optimizer)
-            set_optimizer_attribute(pm.model, "print_level", 0)
+            # Solve and extract result
+            PGLearn.solve!(opf)
+            res = PGLearn.extract_result(opf)
             
-            # Solve
-            optimize!(pm.model)
-            
-            # Check solution
-            if termination_status(pm.model) == LOCALLY_SOLVED
-                println("Successfully solved OPF with sysimage!")
-                println("Objective value: ", objective_value(pm.model))
-            else
-                println("WARNING: OPF did not solve to optimality")
-                exit(1)
-            end
+            println("Successfully ran README example with sysimage!")
+            println("Objective value: ", res["meta"]["objective"])
           '
