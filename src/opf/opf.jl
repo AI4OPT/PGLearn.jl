@@ -324,6 +324,7 @@ include("utils.jl")
 include("ptdf.jl")
 
 include("acp.jl")      # ACPPowerModel
+include("acp_param.jl") # Parametric ACOPF for differentiation
 include("dcp.jl")      # DCPPowerModel
 include("ed.jl")       # EconomicDispatch
 include("socwr.jl")    # SOCOPF & SOCOPFQuad
