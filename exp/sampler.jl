@@ -12,9 +12,8 @@ using PGLib
 using JuMP
 using Clarabel
 using Ipopt
+using Mosek, MosekTools
 using HiGHS
-# NOTE: Mosek is optional. Comment out the line below if Mosek is not installed.
-# using Mosek, MosekTools
 
 using HSL_jll
 const LIB_COINHSL = HSL_jll.libhsl_path
@@ -29,9 +28,8 @@ const NAME2OPTIMIZER = Dict(
     "Clarabel128" => Clarabel.Optimizer{Float128},
     "Clarabel" => Clarabel.Optimizer{Float64},
     "Ipopt" => Ipopt.Optimizer,
+    "Mosek" => Mosek.Optimizer,
     "HiGHS" => HiGHS.Optimizer,
-    # NOTE: Mosek is optional. Uncomment the line below if Mosek is installed.
-    # "Mosek" => Mosek.Optimizer,
 )
 
 # Helper function to use correct arithmetic
