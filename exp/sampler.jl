@@ -12,7 +12,7 @@ using PGLib
 using JuMP
 using Clarabel
 using Ipopt
-using Mosek, MosekTools
+# using Mosek, MosekTools
 using HiGHS
 
 using HSL_jll
@@ -28,7 +28,7 @@ const NAME2OPTIMIZER = Dict(
     "Clarabel128" => Clarabel.Optimizer{Float128},
     "Clarabel" => Clarabel.Optimizer{Float64},
     "Ipopt" => Ipopt.Optimizer,
-    "Mosek" => Mosek.Optimizer,
+    # "Mosek" => Mosek.Optimizer,
     "HiGHS" => HiGHS.Optimizer,
 )
 
