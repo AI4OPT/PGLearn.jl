@@ -61,33 +61,37 @@ solver.attributes.reduced_tol_ktratio    = 1e-6
 
 [OPF.SOCOPF128]
 # These settings are meant to solve `SOCWRConic` problems to high precision
+# NOTE: Tolerances of 1e-8 to 1e-10 are recommended for Clarabel128.
+# Tighter tolerances (e.g., 1e-12) often result in ALMOST_OPTIMAL status
+# even though the solutions have very small constraint violations.
 type = "SOCOPF"
 solver.name = "Clarabel128"
 solver.attributes.max_iter = 2000
 solver.attributes.max_step_fraction = 0.995
-# Disabling scaling can avoid violations (especially in the dual)
-# /!\ This results in worse performance /!\
+# Equilibration helps with numerical stability
 solver.attributes.equilibrate_enable = true
-# Tight tolerances
-solver.attributes.tol_gap_abs    = 1e-12
-solver.attributes.tol_gap_rel    = 1e-12
-solver.attributes.tol_feas       = 1e-12
-solver.attributes.tol_infeas_rel = 1e-12
-solver.attributes.tol_ktratio    = 1e-10
-# Reduced accuracy settings
+# Tight but achievable tolerances for Float128 precision
+# These settings achieve OPTIMAL status in most cases
+solver.attributes.tol_gap_abs    = 1e-8
+solver.attributes.tol_gap_rel    = 1e-8
+solver.attributes.tol_feas       = 1e-8
+solver.attributes.tol_infeas_rel = 1e-8
+solver.attributes.tol_ktratio    = 1e-8
+# Reduced accuracy settings (match main tolerances)
 solver.attributes.reduced_tol_gap_abs    = 1e-8
 solver.attributes.reduced_tol_gap_rel    = 1e-8
 solver.attributes.reduced_tol_feas       = 1e-8
 solver.attributes.reduced_tol_infeas_abs = 1e-8
 solver.attributes.reduced_tol_infeas_rel = 1e-8
-solver.attributes.reduced_tol_ktratio    = 1e-7
-# Additional linear solver-related settings, to match precision of Float128
-solver.attributes.static_regularization_enable = false  # typically not needed unless tolerances go below 1e-14
-solver.attributes.dynamic_regularization_enable = true  # kept for safety
-solver.attributes.dynamic_regularization_eps = 1e-28
-solver.attributes.dynamic_regularization_delta = 1e-14
-solver.attributes.iterative_refinement_reltol = 1e-18
-solver.attributes.iterative_refinement_abstol = 1e-18
+solver.attributes.reduced_tol_ktratio    = 1e-8
+# Additional linear solver-related settings can be enabled if needed
+# These are typically only necessary for tolerances below 1e-10
+# solver.attributes.static_regularization_enable = false
+# solver.attributes.dynamic_regularization_enable = true
+# solver.attributes.dynamic_regularization_eps = 1e-28
+# solver.attributes.dynamic_regularization_delta = 1e-14
+# solver.attributes.iterative_refinement_reltol = 1e-18
+# solver.attributes.iterative_refinement_abstol = 1e-18
 
 [slurm]
 # SLURM options
