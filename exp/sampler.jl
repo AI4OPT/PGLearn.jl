@@ -75,7 +75,7 @@ function build_and_solve_model(data, config, dataset_name; time_limit=Inf)
     if solver_config["name"] == "Ipopt"
         # Make sure we provide an HSL path
         if !HAS_REAL_HSL
-            warn("Ignoring HSL linear solver since the installed HSL_jll is dummy. See the Ipopt.jl README for how to install HSL.")
+            @warn "Ignoring HSL linear solver since the installed HSL_jll is dummy. See the Ipopt.jl README for how to install HSL."
         else
             get!(solver_config, "attributes", Dict())
             get!(solver_config["attributes"], "hsllib", HSL_jll.libhsl_path)
