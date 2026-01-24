@@ -14,7 +14,6 @@ create_sysimage(
         "MosekTools",
         "PGLearn",
         "PGLib",
-        "Pkg",
         "PowerModels",
         "Quadmath",
         "Random",
