@@ -90,11 +90,9 @@ function build_and_solve_model(data, config, dataset_name; time_limit=nothing)
     set_silent(opf.model)
     # Set time limit if one is not already set
     current_time_limit = JuMP.time_limit_sec(opf.model)
-    if isnothing(current_time_limit) || !isfinite(current_time_limit)
+    if (isnothing(current_time_limit) || !isfinite(current_time_limit)) && time_limit != current_time_limit
         @info "setting time limit to $time_limit"
         JuMP.set_time_limit_sec(opf.model, time_limit)
-    else
-        @info "skipping time limit since it is already $(JuMP.time_limit_sec(opf.model))"
     end
     
     PGLearn.solve!(opf)
