@@ -67,7 +67,7 @@ function get_time_limits(config)
     return time_limits
 end
 
-function build_and_solve_model(data, config, dataset_name; time_limit=nothing)
+function build_and_solve_model(data, config, dataset_name; time_limit=Inf)
     opf_config = config["OPF"][dataset_name]
     OPF = PGLearn.OPF2TYPE[opf_config["type"]]
     solver_config = get(opf_config, "solver", Dict())
