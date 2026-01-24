@@ -1,7 +1,7 @@
 ## add commands to this file that make gcc, parallel, and julia available.
 
 ## if using lmod, grab the latest versions
-module load gcc parallel julia
+module load gcc parallel
 
 ## if using bashrc, source it
 # source $HOME/.bashrc
