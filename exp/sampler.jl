@@ -16,6 +16,7 @@ using Mosek, MosekTools
 using HiGHS
 
 using HSL_jll
+const HAS_REAL_HSL = (@ccall HSL_jll.libhsl.LIBHSL_isfunctional()::Bool)
 const LIB_COINHSL = HSL_jll.libhsl_path
 
 using PGLearn
@@ -73,8 +74,12 @@ function build_and_solve_model(data, config, dataset_name; time_limit=nothing)
 
     if solver_config["name"] == "Ipopt"
         # Make sure we provide an HSL path
-        get!(solver_config, "attributes", Dict())
-        get!(solver_config["attributes"], "hsllib", HSL_jll.libhsl_path)
+        if !HAS_REAL_HSL
+            warn("Ignoring HSL linear solver since the installed HSL_jll is dummy. See the Ipopt.jl README for how to install HSL.")
+        else
+            get!(solver_config, "attributes", Dict())
+            get!(solver_config["attributes"], "hsllib", HSL_jll.libhsl_path)
+        end
     end
 
     solver = optimizer_with_attributes(NAME2OPTIMIZER[solver_config["name"]],
@@ -91,7 +96,7 @@ function build_and_solve_model(data, config, dataset_name; time_limit=nothing)
     # Set time limit if one is not already set
     current_time_limit = JuMP.time_limit_sec(opf.model)
     if (isnothing(current_time_limit) || !isfinite(current_time_limit)) && time_limit != current_time_limit
-        @info "setting time limit to $time_limit"
+        @info "setting time limit to $time_limit, was $current_time_limit"
         JuMP.set_time_limit_sec(opf.model, time_limit)
     end
     
