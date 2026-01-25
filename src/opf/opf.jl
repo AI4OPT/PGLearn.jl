@@ -1,4 +1,3 @@
-using MathOptSymbolicAD
 using SparseArrays
 
 abstract type AbstractFormulation end
@@ -358,5 +357,13 @@ function build_opf(OPF::Type{<:AbstractFormulation}, network::Dict, optimizer; c
 end
 
 function solve!(opf::OPFModel{<:AbstractFormulation})
-    optimize!(opf.model; _differentiation_backend = MathOptSymbolicAD.DefaultBackend())
+    maybe_set_ad(opf)
+    optimize!(opf.model)
+end
+function maybe_set_ad(opf::OPFModel{<:AbstractFormulation})
+    !isnothing(nonlinear_model(opf.model)) && set_attribute(
+        opf.model,
+        MOI.AutomaticDifferentiationBackend(),
+        MOI.Nonlinear.SymbolicMode(),
+    )
 end
