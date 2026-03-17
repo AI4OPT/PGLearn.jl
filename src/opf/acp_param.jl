@@ -10,6 +10,11 @@ Returns the model and the parameter variables (pd, qd) for differentiation.
 function build_opf(::Type{ACOPFParam}, data::OPFData, optimizer;
     T=Float64,
 )
+    model = JuMP.GenericModel{T}(optimizer)
+    return build_opf!(ACOPFParam, model, data)
+end
+
+function build_opf!(::Type{ACOPFParam}, model::JuMP.AbstractModel, data::OPFData)
     N, E, G, L = data.N, data.E, data.G, data.L
     vmin, vmax = data.vmin, data.vmax
     i0 = data.ref_bus
@@ -26,7 +31,6 @@ function build_opf(::Type{ACOPFParam}, data::OPFData, optimizer;
     dvamin, dvamax, smax = data.dvamin, data.dvamax, data.smax
     branch_status = data.branch_status
 
-    model = JuMP.GenericModel{T}(optimizer)
     model.ext[:opf_model] = ACOPFParam
 
     #
