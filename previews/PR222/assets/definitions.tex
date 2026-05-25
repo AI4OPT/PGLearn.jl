@@ -1,0 +1,175 @@
+% Imaginary unit
+\newcommand{\im}{\mathbf{j}}
+
+% matrix sets
+\newcommand{\symmat}{\mathbb{S}}
+\newcommand{\skewmat}{\overline{\symmat}}
+\newcommand{\psdsymmat}{\symmat_{+}}
+\newcommand{\hermat}{\mathbb{H}}
+\newcommand{\psdhermat}{\hermat_{+}}
+
+% Branch admittance parameters
+\newcommand{\gff}{g^{\text{ff}}}
+\newcommand{\gft}{g^{\text{ft}}}
+\newcommand{\gtf}{g^{\text{tf}}}
+\newcommand{\gtt}{g^{\text{tt}}}
+\newcommand{\bff}{b^{\text{ff}}}
+\newcommand{\bft}{b^{\text{ft}}}
+\newcommand{\btf}{b^{\text{tf}}}
+\newcommand{\btt}{b^{\text{tt}}}
+
+% OPF parameters
+% lower/upper bounds on active/reactive generation
+\newcommand{\pgmin}{\underline{{p}}^{\text{g}}}
+\newcommand{\pgmax}{\overline{{p}}^{\text{g}}}
+\newcommand{\qgmin}{\underline{{q}}^{\text{g}}}
+\newcommand{\qgmax}{\overline{{q}}^{\text{g}}}
+% Lower / upper bounds on voltage magnitude
+\newcommand{\vmmin}{\underline{{v}}}
+\newcommand{\vmmax}{\overline{{v}}}
+% Lower/upper bounds on angle deviation
+\newcommand{\dvamin}{\underline{\Delta} \theta}
+\newcommand{\dvamax}{\overline{\Delta} \theta}
+
+% w variables (for SOC formulation)
+% SOC variables (and bounds)
+\newcommand{\wm}{\mathbf{w}}
+\newcommand{\wmin}{\underline{w}}
+\newcommand{\wmax}{\overline{w}}
+\newcommand{\wr}{\mathbf{w}^{\text{re}}}
+\newcommand{\wi}{\mathbf{w}^{\text{im}}}
+\newcommand{\wrmin}{\underline{w}^{\text{re}}}
+\newcommand{\wrmax}{\overline{w}^{\text{re}}}
+\newcommand{\wimin}{\underline{w}^{\text{im}}}
+\newcommand{\wimax}{\overline{w}^{\text{im}}}
+
+% SDP variables
+\newcommand{\Wsdp}{\mathbf{W}}
+\newcommand{\Xsdp}{\mathbf{X}}
+\newcommand{\Wrsdp}{\Wsdp^{\text{re}}}
+\newcommand{\Wisdp}{\Wsdp^{\text{im}}}
+
+% acopf
+% Power System
+\newcommand{\PS}{\mathcal{P}} 
+% edges (lines + transformers)
+\newcommand{\EDGES}{\mathcal{E}}
+\newcommand{\BRANCHES}{\EDGES}
+\newcommand{\LOADS}{\mathcal{L}}
+\newcommand{\GENERATORS}{\mathcal{G}}
+\newcommand{\NODES}{\mathcal{N}}
+% complex generation
+\newcommand{\SG}{S^{\text{g}}}
+% active power generation
+\newcommand{\PG}{\mathbf{p}^{\text{g}}}
+% active power reserve
+\newcommand{\PR}{\mathbf{p}^{\text{r}}}
+% reactive power generation
+\newcommand{\QG}{\mathbf{q}^{\text{g}}}
+% complex demand
+\newcommand{\SD}{S^{\text{d}}}
+% active load
+\newcommand{\PD}{{p}^{\text{d}}}
+% reactive load
+\newcommand{\QD}{{q}^{\text{d}}}
+% active shunt
+\newcommand{\GS}{{g}^{\text{s}}}
+% reactive shunt
+\newcommand{\BS}{{b}^{\text{s}}}
+% complex voltage
+\newcommand{\V}{\mathbf{V}} 
+% voltage magnitude
+\newcommand{\VM}{\mathbf{v}}
+% voltage angle
+\newcommand{\VA}{\boldsymbol{\theta}}
+% difference in voltage angle
+\newcommand{\DVA}{\Delta\boldsymbol{\theta}}
+% complex flow
+\newcommand{\SF}{S^{\text{f}}}
+% active flow
+\newcommand{\PF}{\mathbf{p}^{\text{f}}} 
+% reactive flow
+\newcommand{\QF}{\mathbf{q}^{\text{f}}} 
+% active flow
+\newcommand{\PT}{\mathbf{p}^{\text{t}}} 
+% reactive flow
+\newcommand{\QT}{\mathbf{q}^{\text{t}}} 
+% dual multipliers
+\newcommand{\LMDA}{\boldsymbol{\lambda}}
+% dual multipliers
+\newcommand{\MU}{\boldsymbol{\mu}}
+% penalty coefficients
+\newcommand{\RHO}{\boldsymbol{\rho}}
+
+
+%% Dual variables
+% Notation convention:
+%   * \lambda --> equality constraints
+%   * \mu     --> linear inequality constraints
+%   * \nu     --> conic (SOC) constraints
+% Power balance (active/reactive)
+\newcommand{\lambdaP}{\lambda^{\text{p}}}
+\newcommand{\lambdaQ}{\lambda^{\text{q}}}
+% Ohm's law (active/reactive, from/to)
+\newcommand{\lambdaf}{{\lambda}^{\text{f}}}
+\newcommand{\lambdat}{{\lambda}^{\text{t}}}
+\newcommand{\lambdaPf}{{\lambda}^{\text{pf}}}
+\newcommand{\lambdaPt}{{\lambda}^{\text{pt}}}
+\newcommand{\lambdaQf}{{\lambda}^{\text{qf}}}
+\newcommand{\lambdaQt}{{\lambda}^{\text{qt}}}
+
+% Transmission limit (from/to)
+\newcommand{\nuThermalfr}{{\nu}^{\text{f}}}
+\newcommand{\nuThermalSfr}{{\nu}^{\text{sf}}}
+\newcommand{\nuThermalPfr}{{\nu}^{\text{pf}}}
+\newcommand{\nuThermalQfr}{{\nu}^{\text{qf}}}
+\newcommand{\nuThermalto}{{\nu}^{\text{t}}}
+\newcommand{\nuThermalSto}{{\nu}^{\text{st}}}
+\newcommand{\nuThermalPto}{{\nu}^{\text{pt}}}
+\newcommand{\nuThermalQto}{{\nu}^{\text{qt}}}
+
+% Voltage product (conic)
+\newcommand{\omegaf}{\omega^{\text{f}}}
+\newcommand{\omegat}{\omega^{\text{t}}}
+\newcommand{\omegar}{\omega^{\text{re}}}
+\newcommand{\omegai}{\omega^{\text{im}}}
+% Dispatch bounds (active/reactive)
+\newcommand{\muPg}{{\mu}^{\text{pg}}}
+\newcommand{\muPgMin}{\underline{\mu}^{\text{pg}}}
+\newcommand{\muPgMax}{\bar{\mu}^{\text{pg}}}
+\newcommand{\muQg}{{\mu}^{\text{qg}}}
+\newcommand{\muQgMin}{\underline{\mu}^{\text{qg}}}
+\newcommand{\muQgMax}{\bar{\mu}^{\text{qg}}}
+% Power flow bounds (active/reactive, to/fr)
+\newcommand{\muPf}{{\mu}^{\text{pf}}}
+\newcommand{\muPfMin}{\underline{\mu}^{\text{pf}}}
+\newcommand{\muPfMax}{\bar{\mu}^{\text{pf}}}
+\newcommand{\muQf}{{\mu}^{\text{qf}}}
+\newcommand{\muQfMin}{\underline{\mu}^{\text{qf}}}
+\newcommand{\muQfMax}{\bar{\mu}^{\text{qf}}}
+\newcommand{\muPt}{{\mu}^{\text{pt}}}
+\newcommand{\muPtMin}{\underline{\mu}^{\text{pt}}}
+\newcommand{\muPtMax}{\bar{\mu}^{\text{pt}}}
+\newcommand{\muQt}{{\mu}^{\text{qt}}}
+\newcommand{\muQtMin}{\underline{\mu}^{\text{qt}}}
+\newcommand{\muQtMax}{\bar{\mu}^{\text{qt}}}
+% Voltage magnitude bounds
+\newcommand{\muWm}{{\mu}^{\text{w}}}
+\newcommand{\muWmMin}{\underline{\mu}^{\text{w}}}
+\newcommand{\muWmMax}{\bar{\mu}^{\text{w}}}
+% Voltage product bounds
+\newcommand{\muWr}{{\mu}^{\text{wr}}}
+\newcommand{\muWrMin}{\underline{\mu}^{\text{wr}}}
+\newcommand{\muWrMax}{\bar{\mu}^{\text{wr}}}
+\newcommand{\muWi}{{\mu}^{\text{wi}}}
+\newcommand{\muWiMin}{\underline{\mu}^{\text{wi}}}
+\newcommand{\muWiMax}{\bar{\mu}^{\text{wi}}}
+% Angle difference bounds
+\newcommand{\muAngleDiff}{{\mu}^{\theta}}
+\newcommand{\muAngleDiffMin}{\underline{\mu}^{\theta}}
+\newcommand{\muAngleDiffMax}{\bar{\mu}^{\theta}}
+
+% SDP
+\newcommand{\Ssdp}{\mathbf{S}}
+\newcommand{\Srsdp}{\Ssdp^{\text{re}}}
+\newcommand{\Sisdp}{\Ssdp^{\text{im}}}
