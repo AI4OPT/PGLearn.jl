@@ -314,10 +314,12 @@ function extract_dual(opf::OPFModel{SparseSDPOPF})
         for (gidx, group) in enumerate(groups)
             n = length(group)
             S_g = dual.(constraint_by_name(model, "S_$(gidx)"))  # 2n * 2n, with four n * n blocks
+            S_g = (S_g + S_g') / 2  # ensure symmetry
             WR_g = model[Symbol("WR_$(gidx)")]
             for i in 1:n
                 i_bus = group[i]
-                dual_solution["s"][i_bus] += S_g[i, i]
+                # Diagonal mean of S_g[1,1] and S_g[2,2] blocks
+                dual_solution["s"][i_bus] += (S_g[i, i] + S_g[i + n, i + n]) / 2
                 # For mu_w, we also need to sum the values multiple times for the same bus, since bounds
                 # have been imposed on all linked w variables
                 dual_solution["w"][i_bus] += dual(LowerBoundRef(WR_g[i, i])) + dual(UpperBoundRef(WR_g[i, i]))
@@ -330,10 +332,12 @@ function extract_dual(opf::OPFModel{SparseSDPOPF})
                 i_bus, j_bus = group[i], group[j]
                 # If there are multiple branches from bus i to j, the same entries of S are extracted for
                 # each of the branches.
-                e_idx = findall(==((i_bus, j_bus)), zip(bus_fr, bus_to) |> collect)
+                e_idx = findall(i -> bus_fr[i] == i_bus && bus_to[i] == j_bus, 1:E)
                 for e in e_idx
-                    dual_solution["sr"][e] += S_g[i, j]
-                    dual_solution["si"][e] += S_g[i, j + n]
+                    # Mean of S_g[1,1] and S_g[2,2] blocks
+                    dual_solution["sr"][e] += (S_g[i, j] + S_g[i + n, j + n]) / 2
+                    # Mean of upper triangle and lower triangle of S_g[1,2] block
+                    dual_solution["si"][e] += (S_g[i, j + n] - S_g[j, i + n]) / 2
                 end
             end
         end

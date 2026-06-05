@@ -237,12 +237,13 @@ function extract_dual(opf::OPFModel{SDPOPF})
 
     if has_duals(model)
         S = dual.(model[:S])  # 2N * 2N, with four N * N blocks
+        S = (S + S') / 2  # ensure symmetry
 
         # Bus-level constraints
         dual_solution["kcl_p"] = dual.(model[:kcl_p])
         dual_solution["kcl_q"] = dual.(model[:kcl_q])
-        # diagonal of the upper-left block of S
-        dual_solution["s"] = [S[i, i] for i in 1:N]
+        # Diagonal mean of S[1,1] and S[2,2] blocks
+        dual_solution["s"] = [(S[i, i] + S[i + N, i + N]) / 2 for i in 1:N]
 
         # Generator-level constraints
         # N/A
@@ -259,9 +260,11 @@ function extract_dual(opf::OPFModel{SDPOPF})
         # that don't are 0.
         # If there are multiple branches from bus i to j, the same entries of S are extracted for
         # each of the branches.
-        dual_solution["sr"] = [S[bus_fr[e], bus_to[e]] for e in 1:E] # upper left block of S
-        dual_solution["si"] = [S[bus_fr[e], bus_to[e] + N] for e in 1:E] # upper right block of S
-        
+        # Mean of S[1,1] and S[2,2] blocks
+        dual_solution["sr"] = [(S[bus_fr[e], bus_to[e]] + S[bus_fr[e] + N, bus_to[e] + N]) / 2 for e in 1:E]
+        # Mean of upper triangle and lower triangle of S[1,2] block
+        dual_solution["si"] = [(S[bus_fr[e], bus_to[e] + N] - S[bus_to[e], bus_fr[e] + N]) / 2 for e in 1:E]
+
         # For conic constraints, JuMP will return Vector{Vector{T}}
         # reshape duals of conic constraints into matrix shape
         dual_solution["sm_fr"] = mapreduce(permutedims, vcat, dual_solution["sm_fr"])
