@@ -129,14 +129,15 @@ function _test_sdpwrm_DualFeasibility(data::PGLearn.OPFData, res; atol=1e-6)
     
     # Reconstruct S from s, sr, si
     S = Symmetric(sparse(
-        vcat([1:N;], [N+1 : 2*N;], bus_fr, bus_to, bus_fr .+ N, bus_to .+ N, bus_fr, bus_to),
-        vcat([1:N;], [N+1 : 2*N;], bus_to, bus_fr, bus_to .+ N, bus_fr .+ N, bus_to .+ N, bus_fr .+ N),
+        vcat(1:N, N+1 : 2*N, bus_fr, bus_to, bus_fr .+ N, bus_to .+ N, bus_fr, bus_to),
+        vcat(1:N, N+1 : 2*N, bus_to, bus_fr, bus_to .+ N, bus_fr .+ N, bus_to .+ N, bus_fr .+ N),
         # Symmetric() uses the upper triangular part of the matrix, but there may be branches where f_bus > t_bus (entry is below the diagonal), so we repeat sr for both directions of each branch
         vcat(s, s, sr, sr, sr, sr, si, -si),
         2*N, 2*N,
         # ignore duplicate values at the same position
         (x, y) -> x
     ))
+    @test eigmin(Matrix(S)) >= -atol
 
     # Check dual constraint corresponding to `WR` variables
     AR_ff_values = [
