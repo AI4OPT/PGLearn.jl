@@ -34,6 +34,8 @@ const OPT_SOLVERS = Dict(
 
 
 const PGLIB_CASES = ["14_ieee", "30_ieee", "57_ieee", "89_pegase", "118_ieee"]
+# Only include the 14-bus case for SDP tests to save time for CI.
+# It is recommended to run SDP tests on larger systems locally, preferably with commercial solvers or Clarabel with Float128.
 const PGLIB_CASES_SDP = ["14_ieee"]
 @testset "PGLearn" begin
     include("utils/io.jl")

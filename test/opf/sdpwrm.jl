@@ -60,7 +60,7 @@ end
 
 Test dual feasibility of SDPWRM problem.
 
-This test is executed on the 5 bus system.
+This test is executed on the 5-bus system to save time for CI. It is recommended to run this test on larger systems locally.
 """
 function _test_sdpwrm_DualFeasibility(OPF::Union{Type{PGLearn.SDPOPF}, Type{PGLearn.SparseSDPOPF}})
     T = Float128
@@ -95,7 +95,7 @@ Tests feasibility for dual constraints associated to `WR` and `WI` variables.
 
 # Arguments
 - `data::OPFData`: OPF instance data
-- `res`: Result dictionary of the SOCWR optimization
+- `res`: Result dictionary of the SDPWRM optimization
 - `atol=1e-6`: The absolute tolerance for feasibility checks (default is 1e-6).
 """
 function _test_sdpwrm_DualFeasibility(data::PGLearn.OPFData, res; atol=1e-6)
