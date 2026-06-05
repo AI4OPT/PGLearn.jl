@@ -71,20 +71,23 @@ function build_opf(::Type{SparseSDPOPF}, data::OPFData, optimizer;
             # note that bounds are added for all the linked variables and not just one of them
             set_lower_bound.(WR_g[i, i], vmin[i_bus]^2)
             set_upper_bound.(WR_g[i, i], vmax[i_bus]^2)
-            # match each bus to one of the WR_g's
+            # if i_bus is currently unmatched, link it to WR_g[i, i]
             if !(i_bus in visited_buses)
                 push!(visited_buses, i_bus)
                 w_map[i_bus] = WR_g[i, i]
             end
         end
 
-        # Match each branch to one of the entries of WR_g and of WI_g
-        # Iterate over both directions of each bus pair since a branch may exist in either direction
+        # Match the entries of WR_g and of WI_g to branches
+        # Iterate over both directions of each bus pair in `group` since a branch may exist in either direction
         offdiag_indices = [(i, j) for i in 1:n, j in 1:n if i != j]
         for (i, j) in offdiag_indices
             i_bus, j_bus = group[i], group[j]
             # if there exists a branch from i_bus to j_bus
             if (i_bus, j_bus) in zip(bus_fr, bus_to)
+                # If the bus pair is currently unmatched, link it to WR_g[i, j] and WI_g[i, j]
+                # Note that even if there are multiple branches, the same directed bus pair is
+                # only matched once
                 if !((i_bus, j_bus) in visited_directed_buspairs)
                     push!(visited_directed_buspairs, (i_bus, j_bus))
                     wr_map[(i_bus, j_bus)] = WR_g[i, j]
