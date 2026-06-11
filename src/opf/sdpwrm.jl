@@ -299,7 +299,7 @@ function extract_dual(opf::OPFModel{SDPOPF})
         # If there are multiple branches from bus i to j, the same (i, j) entries of μ_WR and μ_WI are extracted for
         # each of the branches.
         dual_solution["wr"] = dual.(LowerBoundRef.([model[:WR][i, j] for (i, j) in zip(bus_fr, bus_to)])) + dual.(UpperBoundRef.([model[:WR][i, j] for (i, j) in zip(bus_fr, bus_to)]))
-        dual_solution["wi"] = (dual.(LowerBoundRef.([model[:WI][i, j] for (i, j) in zip(bus_fr, bus_to)])) + dual.(UpperBoundRef.([model[:WI][i, j] for (i, j) in zip(bus_fr, bus_to)]))) .* 2
+        dual_solution["wi"] = (dual.(LowerBoundRef.([model[:WI][i, j] for (i, j) in zip(bus_fr, bus_to)])) + dual.(UpperBoundRef.([model[:WI][i, j] for (i, j) in zip(bus_fr, bus_to)])))
         dual_solution["pf"] = dual.(LowerBoundRef.(model[:pf])) + dual.(UpperBoundRef.(model[:pf]))
         dual_solution["qf"] = dual.(LowerBoundRef.(model[:qf])) + dual.(UpperBoundRef.(model[:qf]))
         dual_solution["pt"] = dual.(LowerBoundRef.(model[:pt])) + dual.(UpperBoundRef.(model[:pt]))

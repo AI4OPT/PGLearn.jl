@@ -356,7 +356,7 @@ function extract_dual(opf::OPFModel{SparseSDPOPF})
                     # Mean of upper triangle and lower triangle of S_g[1,2] block
                     dual_solution["si"][e] += (S_g[i, j + n] - S_g[j, i + n]) / 2
                     dual_solution["wr"][e] += dual(LowerBoundRef(WR_g[i, j])) + dual(UpperBoundRef(WR_g[i, j]))
-                    dual_solution["wi"][e] += (dual(LowerBoundRef(WI_g[i, j])) + dual(UpperBoundRef(WI_g[i, j]))) .* 2
+                    dual_solution["wi"][e] += (dual(LowerBoundRef(WI_g[i, j])) + dual(UpperBoundRef(WI_g[i, j])))
                 end
             end
         end
