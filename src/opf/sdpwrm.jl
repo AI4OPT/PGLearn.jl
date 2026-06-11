@@ -26,6 +26,8 @@ function build_opf(::Type{SDPOPF}, data::OPFData, optimizer;
     dvamin, dvamax, smax = data.dvamin, data.dvamax, data.smax
     branch_status = data.branch_status
 
+    wr_min, wr_max, wi_min, wi_max = compute_voltage_phasor_bounds(data)
+
     model = JuMP.GenericModel{T}(optimizer)
     model.ext[:opf_model] = SDPOPF
 
@@ -41,7 +43,7 @@ function build_opf(::Type{SDPOPF}, data::OPFData, optimizer;
 
     # voltage magnitude and product
     @variable(model, WR[1:N, 1:N], Symmetric)
-    @variable(model, WI[1:N, 1:N] in SkewSymmetricMatrixSpace())
+    @variable(model, WI[1:N, 1:N])
 
     # Active and reactive dispatch
     @variable(model, pg[g in 1:G])
@@ -60,6 +62,16 @@ function build_opf(::Type{SDPOPF}, data::OPFData, optimizer;
     # Voltage magnitude bounds
     set_lower_bound.([WR[i, i] for i in 1:N], vmin.^2)
     set_upper_bound.([WR[i, i] for i in 1:N], vmax.^2)
+
+    # Voltage product bounds
+    # Only apply bounds on (i, j) entries and not (j, i).
+    # If a bus pair has parallel branches, `set_lower_bound` and `set_upper_bound` are called
+    # with the same bounds for multiple times (calls subsequent to the first are no-op).
+    # Currently, these variables are not fixed to 0 when all branches between the bus pair are off.
+    set_lower_bound.([WR[i,j] for (i, j) in zip(bus_fr, bus_to)], wr_min)
+    set_upper_bound.([WR[i,j] for (i, j) in zip(bus_fr, bus_to)], wr_max)
+    set_lower_bound.([WI[i,j] for (i, j) in zip(bus_fr, bus_to)], wi_min)
+    set_upper_bound.([WI[i,j] for (i, j) in zip(bus_fr, bus_to)], wi_max)
 
     # Active generation bounds (both zero if generator is off)
     set_lower_bound.(pg, gen_status .* pgmin)
@@ -105,6 +117,7 @@ function build_opf(::Type{SDPOPF}, data::OPFData, optimizer;
     # If e_1 and e_2 are parallel branches that connect from bus i to j, then
     # wf[e_1] and wf[e_2] will refer to the same entry in W.
     # Similarly for wt, wr and wi.
+    # ⚠️ This is different from SOCOPF, where these are defined over the branches distinctively.
     @expression(model, wf[e in 1:E], WR[bus_fr[e], bus_fr[e]])
     @expression(model, wt[e in 1:E], WR[bus_to[e], bus_to[e]])
     @expression(model, wr[e in 1:E], WR[bus_fr[e], bus_to[e]])
@@ -183,7 +196,7 @@ function extract_primal(opf::OPFModel{SDPOPF})
         # to save space. Other off-diagonal entries of W only appear in the PSD constraint and
         # not in any other constraint.
         # These entries can be recovered by solving a PSD matrix completion problem.
-        # If there are multiple branches from bus i to j, the same entries of W are extracted
+        # If there are multiple branches from bus i to j, the same (i, j) entry of W is extracted
         # for each of the branches.
         primal_solution["wr"] = value.(model[:wr])
         primal_solution["wi"] = value.(model[:wi])
@@ -229,6 +242,8 @@ function extract_dual(opf::OPFModel{SDPOPF})
         "pg"         => zeros(T, G),
         "qg"         => zeros(T, G),
         # branch
+        "wr"         => zeros(T, E),
+        "wi"         => zeros(T, E),
         "pf"         => zeros(T, E),
         "qf"         => zeros(T, E),
         "pt"         => zeros(T, E),
@@ -258,7 +273,7 @@ function extract_dual(opf::OPFModel{SDPOPF})
         dual_solution["sm_to"] = dual.(model[:sm_to])
         # Extract only the off-diagonal entries of S that correspond to branches, since entries
         # that don't are 0.
-        # If there are multiple branches from bus i to j, the same entries of S are extracted for
+        # If there are multiple branches from bus i to j, the same (i, j) entry of S is extracted for
         # each of the branches.
         # Mean of S[1,1] and S[2,2] blocks
         dual_solution["sr"] = [(S[bus_fr[e], bus_to[e]] + S[bus_fr[e] + N, bus_to[e] + N]) / 2 for e in 1:E]
@@ -282,6 +297,10 @@ function extract_dual(opf::OPFModel{SDPOPF})
         dual_solution["pg"] = dual.(LowerBoundRef.(model[:pg])) + dual.(UpperBoundRef.(model[:pg]))
         dual_solution["qg"] = dual.(LowerBoundRef.(model[:qg])) + dual.(UpperBoundRef.(model[:qg]))
         # branch
+        # If there are multiple branches from bus i to j, the same (i, j) entries of μ_WR and μ_WI are extracted for
+        # each of the branches.
+        dual_solution["wr"] = dual.(LowerBoundRef.([model[:WR][i, j] for (i, j) in zip(bus_fr, bus_to)])) + dual.(UpperBoundRef.([model[:WR][i, j] for (i, j) in zip(bus_fr, bus_to)]))
+        dual_solution["wi"] = (dual.(LowerBoundRef.([model[:WI][i, j] for (i, j) in zip(bus_fr, bus_to)])) + dual.(UpperBoundRef.([model[:WI][i, j] for (i, j) in zip(bus_fr, bus_to)])))
         dual_solution["pf"] = dual.(LowerBoundRef.(model[:pf])) + dual.(UpperBoundRef.(model[:pf]))
         dual_solution["qf"] = dual.(LowerBoundRef.(model[:qf])) + dual.(UpperBoundRef.(model[:qf]))
         dual_solution["pt"] = dual.(LowerBoundRef.(model[:pt])) + dual.(UpperBoundRef.(model[:pt]))

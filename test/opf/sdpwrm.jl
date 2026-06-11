@@ -126,6 +126,8 @@ function _test_sdpwrm_DualFeasibility(data::PGLearn.OPFData, res; atol=1e-6)
     μθ_ub = min.(0, res["dual"]["va_diff"])
 
     μ_w = res["dual"]["w"]
+    μ_wr = res["dual"]["wr"]
+    μ_wi = res["dual"]["wi"]
     
     # Reconstruct S from s, sr, si
     S = Symmetric(sparse(
@@ -163,12 +165,23 @@ function _test_sdpwrm_DualFeasibility(data::PGLearn.OPFData, res; atol=1e-6)
         )
         for e in 1:E
     ]
-    AR = Diagonal([(-gs[i] * λp[i] + bs[i] * λq[i] + μ_w[i]) for i in 1:N]) + Symmetric(sparse(
-        vcat(bus_fr, bus_to, bus_fr, bus_to),
-        vcat(bus_fr, bus_to, bus_to, bus_fr),
-        vcat(AR_ff_values, AR_tt_values, 1/2 * AR_ft_values, 1/2 * AR_ft_values),
-        N, N
-    ))
+    AR = (
+        Diagonal([(-gs[i] * λp[i] + bs[i] * λq[i] + μ_w[i]) for i in 1:N]) + Symmetric(sparse(
+            vcat(bus_fr, bus_to, bus_fr, bus_to),
+            vcat(bus_fr, bus_to, bus_to, bus_fr),
+            vcat(AR_ff_values, AR_tt_values, 1/2 * AR_ft_values, 1/2 * AR_ft_values),
+            N, N
+            # sum over multiple branches between a bus pair
+        ))
+        + Symmetric(sparse(
+            vcat(bus_fr, bus_to),
+            vcat(bus_to, bus_fr),
+            1/2 * vcat(μ_wr, μ_wr),
+            N, N,
+            # ignore duplicate values for the same bus pair
+            (x, y) -> x
+        ))
+    )
     δwr = AR + S[1:N, 1:N] + S[(N+1):(2*N), (N+1):(2*N)]
     @test norm(δwr, Inf) <= atol
 
@@ -184,8 +197,15 @@ function _test_sdpwrm_DualFeasibility(data::PGLearn.OPFData, res; atol=1e-6)
         )
         for e in 1:E
     ]
-    AI = sparse(
-        vcat(bus_fr, bus_to), vcat(bus_to, bus_fr), vcat(1/2 * AI_values, -1/2 * AI_values), N, N
+    AI = (
+        sparse(
+            vcat(bus_fr, bus_to), vcat(bus_to, bus_fr), vcat(1/2 * AI_values, -1/2 * AI_values), N, N
+        )
+        + sparse(
+            vcat(bus_fr, bus_to), vcat(bus_to, bus_fr), 1/2 * vcat(μ_wi, -μ_wi), N, N,
+            # ignore duplicate values for the same bus pair
+            (x, y) -> x
+        )
     )
     δwi = AI + S[1:N, (N+1):(2*N)] - S[(N+1):(2*N), 1:N]
     @test norm(δwi, Inf) <= atol
@@ -212,5 +232,7 @@ function _test_sdpwrm_DualSolFormat(OPF::Union{Type{PGLearn.SDPOPF}, Type{PGLear
     @test size(res["dual"]["sr"]) == (E,)
     @test size(res["dual"]["si"]) == (E,)
     @test size(res["dual"]["w"]) == (N,)
+    @test size(res["dual"]["wr"]) == (E,)
+    @test size(res["dual"]["wi"]) == (E,)
     return nothing
 end
