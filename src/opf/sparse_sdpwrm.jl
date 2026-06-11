@@ -85,13 +85,14 @@ function build_opf(::Type{SparseSDPOPF}, data::OPFData, optimizer;
         offdiag_indices = [(i, j) for i in 1:n, j in 1:n if i != j]
         for (i, j) in offdiag_indices
             i_bus, j_bus = group[i], group[j]
+            # `e` is only for indexing the computed bounds values
+            e = findfirst(e -> bus_fr[e] == i_bus && bus_to[e] == j_bus, 1:E)
             # if (i_bus, j_bus) is a valid directed bus pair in the system
-            if (i_bus, j_bus) in zip(bus_fr, bus_to)
-                # `e`` is only for indexing the computed bounds values
-                e = findfirst(i -> bus_fr[i] == i_bus && bus_to[i] == j_bus, 1:E)
-                # Only apply bounds on (i, j) entries and not (j, i)
+            if !isnothing(e)
+                # Only apply bounds on (i, j) entries and not (j, i).
+                # Currently, these variables are not fixed to 0 when all branches between the bus pair are off.
                 # The outer loop over the cliques will apply bounds to all variables linked to the directed
-                # bus pair (i_bus, j_bus)
+                # bus pair (i_bus, j_bus).
                 set_upper_bound(WR_g[i, j], wr_max[e])
                 set_lower_bound(WR_g[i, j], wr_min[e])
                 set_upper_bound(WI_g[i, j], wi_max[e])
@@ -349,8 +350,8 @@ function extract_dual(opf::OPFModel{SparseSDPOPF})
                 i_bus, j_bus = group[i], group[j]
                 # If there are multiple branches from bus i to j, the same (i, j) entries of S, μ_WR and μ_WI are
                 # extracted for each of the branches.
-                e_idx = findall(i -> bus_fr[i] == i_bus && bus_to[i] == j_bus, 1:E)
-                for e in e_idx
+                es = findall(e -> bus_fr[e] == i_bus && bus_to[e] == j_bus, 1:E)
+                for e in es
                     # Mean of S_g[1,1] and S_g[2,2] blocks
                     dual_solution["sr"][e] += (S_g[i, j] + S_g[i + n, j + n]) / 2
                     # Mean of upper triangle and lower triangle of S_g[1,2] block

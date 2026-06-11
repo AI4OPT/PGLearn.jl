@@ -64,9 +64,10 @@ function build_opf(::Type{SDPOPF}, data::OPFData, optimizer;
     set_upper_bound.([WR[i, i] for i in 1:N], vmax.^2)
 
     # Voltage product bounds
-    # Only apply bounds on (i, j) entries and not (j, i)
+    # Only apply bounds on (i, j) entries and not (j, i).
     # If a bus pair has parallel branches, `set_lower_bound` and `set_upper_bound` are called
     # with the same bounds for multiple times (calls subsequent to the first are no-op).
+    # Currently, these variables are not fixed to 0 when all branches between the bus pair are off.
     set_lower_bound.([WR[i,j] for (i, j) in zip(bus_fr, bus_to)], wr_min)
     set_upper_bound.([WR[i,j] for (i, j) in zip(bus_fr, bus_to)], wr_max)
     set_lower_bound.([WI[i,j] for (i, j) in zip(bus_fr, bus_to)], wi_min)
