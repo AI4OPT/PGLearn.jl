@@ -28,6 +28,8 @@ function build_opf(::Type{SparseSDPOPF}, data::OPFData, optimizer;
     dvamin, dvamax, smax = data.dvamin, data.dvamax, data.smax
     branch_status = data.branch_status
 
+    wr_min, wr_max, wi_min, wi_max = compute_voltage_phasor_bounds(data)
+
     model = JuMP.GenericModel{T}(optimizer)
     model.ext[:opf_model] = SparseSDPOPF
 
@@ -59,9 +61,9 @@ function build_opf(::Type{SparseSDPOPF}, data::OPFData, optimizer;
             Symmetric;
             base_name="WR_$(gidx)"
         )
-        WI_g = voltage_product_groups[gidx][:WI] = @variable(
+        WI_g = model[Symbol("WI_$(gidx)")] = voltage_product_groups[gidx][:WI] = @variable(
             model,
-            [1:n, 1:n] in SkewSymmetricMatrixSpace();
+            [1:n, 1:n];
             base_name="WI_$(gidx)"
         )
         
@@ -83,11 +85,19 @@ function build_opf(::Type{SparseSDPOPF}, data::OPFData, optimizer;
         offdiag_indices = [(i, j) for i in 1:n, j in 1:n if i != j]
         for (i, j) in offdiag_indices
             i_bus, j_bus = group[i], group[j]
-            # if there exists a branch from i_bus to j_bus
+            # if (i_bus, j_bus) is a valid directed bus pair in the system
             if (i_bus, j_bus) in zip(bus_fr, bus_to)
-                # If the bus pair is currently unmatched, link it to WR_g[i, j] and WI_g[i, j]
-                # Note that even if there are multiple branches, the same directed bus pair is
-                # only matched once
+                # `e`` is only for indexing the computed bounds values
+                e = findfirst(i -> bus_fr[i] == i_bus && bus_to[i] == j_bus, 1:E)
+                # Only apply bounds on (i, j) entries and not (j, i)
+                # The outer loop over the cliques will apply bounds to all variables linked to the directed
+                # bus pair (i_bus, j_bus)
+                set_upper_bound(WR_g[i, j], wr_max[e])
+                set_lower_bound(WR_g[i, j], wr_min[e])
+                set_upper_bound(WI_g[i, j], wi_max[e])
+                set_lower_bound(WI_g[i, j], wi_min[e])
+                # If the directed bus pair is currently unmatched, match it to WR_g[i, j] and WI_g[i, j]
+                # for `wr` and `wi` expressions used in constraints.
                 if !((i_bus, j_bus) in visited_directed_buspairs)
                     push!(visited_directed_buspairs, (i_bus, j_bus))
                     wr_map[(i_bus, j_bus)] = WR_g[i, j]
@@ -177,8 +187,9 @@ function build_opf(::Type{SparseSDPOPF}, data::OPFData, optimizer;
 
     # Branch power flow physics and limit constraints
     # If e_1 and e_2 are parallel branches that connect from bus i to j, then
-    # wf[e_1] and wf[e_2] will refer to the same entry in W.
+    # wf[e_1] and wf[e_2] will refer to the same entry in the same linked variable.
     # Similarly for wt, wr and wi.
+    # ⚠️ This is different from SOCOPF, where these are defined over the branches distinctively.
     @expression(model, wf[e in 1:E], w_map[bus_fr[e]])
     @expression(model, wt[e in 1:E], w_map[bus_to[e]])
     @expression(model, wr[e in 1:E], wr_map[(bus_fr[e], bus_to[e])])
@@ -254,7 +265,7 @@ function extract_primal(opf::OPFModel{SparseSDPOPF})
         # of the original network to save space. Other off-diagonal entries of W only appear
         # in the PSD constraints and not in any other constraint.
         # These entries can be recovered by solving a PSD matrix completion problem.
-        # If there are multiple branches from bus i to j, the same entries of W are extracted
+        # If there are multiple branches from bus i to j, the same (i, j) entry of W is extracted
         # for each of the branches.
         primal_solution["wr"] = value.(model[:wr])
         primal_solution["wi"] = value.(model[:wi])
@@ -300,6 +311,8 @@ function extract_dual(opf::OPFModel{SparseSDPOPF})
         "pg"         => zeros(T, G),
         "qg"         => zeros(T, G),
         # branch
+        "wr"         => zeros(T, E),
+        "wi"         => zeros(T, E),
         "pf"         => zeros(T, E),
         "qf"         => zeros(T, E),
         "pt"         => zeros(T, E),
@@ -319,6 +332,7 @@ function extract_dual(opf::OPFModel{SparseSDPOPF})
             S_g = dual.(constraint_by_name(model, "S_$(gidx)"))  # 2n * 2n, with four n * n blocks
             S_g = (S_g + S_g') / 2  # ensure symmetry
             WR_g = model[Symbol("WR_$(gidx)")]
+            WI_g = model[Symbol("WI_$(gidx)")]
             for i in 1:n
                 i_bus = group[i]
                 # Diagonal mean of S_g[1,1] and S_g[2,2] blocks
@@ -333,14 +347,16 @@ function extract_dual(opf::OPFModel{SparseSDPOPF})
             offdiag_indices = [(i, j) for i in 1:n, j in 1:n if i != j]
             for (i, j) in offdiag_indices
                 i_bus, j_bus = group[i], group[j]
-                # If there are multiple branches from bus i to j, the same entries of S are extracted for
-                # each of the branches.
+                # If there are multiple branches from bus i to j, the same (i, j) entries of S, μ_WR and μ_WI are
+                # extracted for each of the branches.
                 e_idx = findall(i -> bus_fr[i] == i_bus && bus_to[i] == j_bus, 1:E)
                 for e in e_idx
                     # Mean of S_g[1,1] and S_g[2,2] blocks
                     dual_solution["sr"][e] += (S_g[i, j] + S_g[i + n, j + n]) / 2
                     # Mean of upper triangle and lower triangle of S_g[1,2] block
                     dual_solution["si"][e] += (S_g[i, j + n] - S_g[j, i + n]) / 2
+                    dual_solution["wr"][e] += dual(LowerBoundRef(WR_g[i, j])) + dual(UpperBoundRef(WR_g[i, j]))
+                    dual_solution["wi"][e] += (dual(LowerBoundRef(WI_g[i, j])) + dual(UpperBoundRef(WI_g[i, j]))) .* 2
                 end
             end
         end
