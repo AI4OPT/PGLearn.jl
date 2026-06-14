@@ -54,6 +54,7 @@ The recommended solver for Ipopt is `ma27`.
 ```toml
 solver.name = "Ipopt"
 solver.attributes.linear_solver = "ma27"
+solver.attributes.hsllib = HSL_jll.libhsl_path
 ```
 
 ## Quick start
