@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>SDP-OPF · PGLearn</title><meta name="title" content="SDP-OPF · PGLearn"/><meta property="og:title" content="SDP-OPF · PGLearn"/><meta property="twitter:title" content="SDP-OPF · PGLearn"/><meta name="description" content="Documentation for PGLearn."/><meta property="og:description" content="Documentation for PGLearn."/><meta property="twitter:description" content="Documentation for PGLearn."/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/wider.css" rel="stylesheet" type="text/css"/><link href="../../assets/redlinks.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../">PGLearn</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Manual</span><ul><li><input class="collapse-toggle" id="menuitem-2-1" type="checkbox" checked/><label class="tocitem" for="menuitem-2-1"><span class="docs-label">Problem formulations</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../notations/">Notations</a></li><li><a class="tocitem" href="../acp/">AC-OPF</a></li><li class="is-active"><a class="tocitem" href>SDP-OPF</a><ul class="internal"><li><a class="tocitem" href="#Mathematical-formulation"><span>Mathematical formulation</span></a></li><li><a class="tocitem" href="#Data-format"><span>Data format</span></a></li></ul></li><li><a class="tocitem" href="../socwr/">SOC-OPF</a></li><li><a class="tocitem" href="../dcp/">DC-OPF</a></li></ul></li><li><a class="tocitem" href="../../io/">I/O utilities</a></li></ul></li><li><a class="tocitem" href="../../lib/public/">Reference</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Manual</a></li><li><a class="is-disabled">Problem formulations</a></li><li class="is-active"><a href>SDP-OPF</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>SDP-OPF</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/AI4OPT/PGLearn.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/AI4OPT/PGLearn.jl/blob/main/docs/src/opf/sdpwrm.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="SDP-OPF"><a class="docs-heading-anchor" href="#SDP-OPF">SDP-OPF</a><a id="SDP-OPF-1"></a><a class="docs-heading-anchor-permalink" href="#SDP-OPF" title="Permalink"></a></h1><p>The SDP-OPF model considered in PGLearn is presented below.</p><h3 id="Definitions"><a class="docs-heading-anchor" href="#Definitions">Definitions</a><a id="Definitions-1"></a><a class="docs-heading-anchor-permalink" href="#Definitions" title="Permalink"></a></h3><p>Let <span>$\im$</span> be the imaginary unit. Let <span>$\cdot^{*}$</span> be the complex conjugate operator.</p><p>The <em>second order cone</em> of order <span>$n$</span> is defined as</p><p class="math-container">\[\mathcal{Q}^{n} = \left\{
+    x \in \mathbb{R}^{n}   
+\ \middle| \
+    x_{1} \geq \sqrt{x_{2}^{2} + ... + x_{n}^{2}}
+\right\}.\]</p><p>The set of <span>$n \times n$</span> symmetric matrices is</p><p class="math-container">\[\symmat^{n} = \left\{
+    X \in \mathbb{R}^{n \times n}
+\ \middle| \
+    X = X^{\top}
+\right\}.\]</p><p>The set of <span>$n \times n$</span> skew-symmetric matrices is</p><p class="math-container">\[\skewmat^{n} = \left\{
+    X \in \mathbb{R}^{n \times n}
+\ \middle| \
+    X = -X^{\top}
+\right\}.\]</p><p>The real <em>positive semidefinite cone</em> of order <span>$n$</span> is defined as</p><p class="math-container">\[\psdsymmat^{n} = \left\{
+    X \in \symmat^{n}
+\ \middle| \
+    X \succeq 0
+\right\}.\]</p><p>which is the set of positive semidefinite <span>$n \times n$</span> symmetric matrices in the real space.</p><p>A complex square matrix is Hermitian if it is equal to its conjugate transpose. The set of <span>$n \times n$</span> Hermitian matrices is</p><p class="math-container">\[\hermat^{n} = \left\{
+    X \in \mathbb{C}^{n \times n}
+\ \middle| \
+    X = X^{H}
+\right\}.\]</p><p>Note that the diagonal entries of a Hermitian matrix are real. The complex <em>positive semidefinite cone</em> of order <span>$n$</span> is defined as</p><p class="math-container">\[\psdhermat^{n} = \left\{
+    X \in \hermat^{n}
+\ \middle| \
+    X \succeq 0
+\right\}.\]</p><p>which is the set of positive semidefinite <span>$n \times n$</span> Hermitian matrices in the complex space.</p><h2 id="Mathematical-formulation"><a class="docs-heading-anchor" href="#Mathematical-formulation">Mathematical formulation</a><a id="Mathematical-formulation-1"></a><a class="docs-heading-anchor-permalink" href="#Mathematical-formulation" title="Permalink"></a></h2><p>The SDP-OPF formulation in PGLearn is obtained through the change of variable <span>$\Wsdp = \V \V^{*}$</span>; i.e., <span>$\Wsdp_{ij} = \V_{i} \V_{j}^{*}$</span>. This change allows formulating AC-OPF so that constraints involving <span>$\Wsdp$</span> are linear in <span>$\Wsdp$</span>. It is known that <span>$\Wsdp = \V \V^{*}$</span> for some <span>$\V$</span> if and only if <span>$\Wsdp \in \psdhermat^{N}$</span> and <span>$rank(\Wsdp) = 1$</span>. By relaxing the rank constraint, a complex semidefinite program (SDP) relaxation of AC-OPF is obtained, where a positive semidefinite constraint requires <span>$\Wsdp \in \psdhermat^{N}$</span>.</p><p>The complex SDP can be converted into a real formulation. Define <span>$\Wrsdp \in \symmat^{N}$</span> and <span>$\Wisdp \in \skewmat^{N}$</span>. Then, it is known that</p><p class="math-container">\[\begin{pmatrix}
+    \Wrsdp &amp; \Wisdp \\
+    -\Wisdp &amp; \Wrsdp
+\end{pmatrix} = \begin{pmatrix}
+    \Wrsdp &amp; \Wisdp \\
+    {\Wisdp}^{\top} &amp; \Wrsdp
+\end{pmatrix} \in \symmat^{2N}\]</p><p>is positive semidefinite if and only if <span>$\Wsdp = \Wrsdp + \im \Wisdp \in \hermat^{N}$</span> also is positive semidefinite in the complex space. Note that, by definition, <span>$diag(\Wsdp) = diag(\Wrsdp)$</span>.</p><p>The resulting SDP-OPF model in the real space is presented below.</p><p class="math-container">\[\begin{align}
+    \min \quad
+    &amp; \label{eq:SDPOPF:objective}
+        \sum_{i \in \NODES} \sum_{j \in \GENERATORS_{i}} c_j \PG_j + c_0
+        \\
+    \textrm{s.t.} \quad
+    &amp; \label{eq:SDPOPF:kcl_p}
+        \sum_{j \in \GENERATORS_{i}} \PG_{j}
+        - \sum_{e \in \EDGES^{+}_{i}} \PF_{e}
+        - \sum_{e \in \EDGES^{-}_{i}} \PT_{e}
+        - \GS_i \Wrsdp_{ii}
+        = \sum_{j\in\LOADS_i} \PD_j
+        &amp; \forall i &amp; \in \NODES
+        % &amp;&amp; [\lambda^{p}]
+        \\
+    &amp; \label{eq:SDPOPF:kcl_q}
+        \sum_{g \in \mathcal{G}_{i}} \QG_{g}
+        - \sum_{e \in \EDGES^{+}_{i}} \QF_{e}
+        - \sum_{e \in \EDGES^{-}_{i}} \QT_{e}
+        + \BS_{i} \Wrsdp_{ii}
+        = \sum_{j\in\LOADS_i} \QD_j
+        &amp; \forall i &amp; \in \NODES
+        % &amp;&amp; [\lambda^{q}]
+        \\
+    % Ohm&#39;s law
+    &amp; \label{eq:SDPOPF:ohm_pf}
+        \gff_{e} \Wrsdp_{ii}
+        + \gft_{e} \Wrsdp_{e}
+        + \bft_{e} \Wisdp_{e}
+        - \PF_{e} = 0
+        &amp; \forall e = (i,j) &amp; \in \EDGES
+        % &amp;&amp; [\lambdaPf]
+        \\
+    &amp; \label{eq:SDPOPF:ohm_qf}
+        -\bff_{e} \Wrsdp_{ii}
+        - \bft_{e} \Wrsdp_{e}
+        + \gft_{e} \Wisdp_{e}
+        - \QF_{e}
+        =0
+        &amp; \forall e = (i, j) &amp; \in \EDGES
+        % &amp;&amp; [\lambdaQf]
+        \\
+    &amp; \label{eq:SDPOPF:ohm_pt}
+        \gtt_{e} \Wrsdp_{jj}
+        + \gtf_{e} \Wrsdp_{e}
+        - \btf_{e} \Wisdp_{e}
+        - \PT_{e}
+        = 0
+        &amp; \forall e = (i, j) &amp; \in \EDGES
+        % &amp;&amp; [\lambdaPt]
+        \\
+    &amp; \label{eq:SDPOPF:ohm_qt}
+        -\btt_{e} \Wrsdp_{jj}
+        - \btf_{e} \Wrsdp_{e}
+        - \gtf_{e} \Wisdp_{e}
+        - \QT_{e}
+        =0 
+        &amp; \forall e = (i, j) &amp; \in \EDGES
+        % &amp;&amp; [\lambdaQt]
+        \\  
+    % Thermal limits
+    &amp; \label{eq:SDPOPF:sm_f}
+        (\bar{s}_{e}, \PF_{e}, \QF_{e}) \in \mathcal{Q}^{3}
+        &amp; \forall e &amp; \in \EDGES 
+        % &amp;&amp; [\nuThermalfr]
+        \\
+    &amp; \label{eq:SDPOPF:sm_t}
+        (\bar{s}_{e}, \PT_{e}, \QT_{e}) \in \mathcal{Q}^{3}
+        &amp; \forall e &amp; \in \EDGES 
+        % &amp;&amp; [\nuThermalto]
+        \\
+    % Voltage angle deviation
+    &amp; \label{eq:SDPOPF:va_diff}
+        \tan(\dvamin_{e}) \Wrsdp_{e} \leq \Wisdp_{e} \leq \tan(\dvamax_{e}) \Wrsdp_{e} 
+        &amp; \forall e &amp; \in \EDGES
+        % &amp;&amp; [\muAngleDiff]
+        \\
+    % Variable bounds
+    &amp;  \label{eq:SDPOPF:pg_bounds}
+        \pgmin_{i} \leq \PG_{i} \leq \pgmax_{i}
+        &amp; \forall i &amp; \in \GENERATORS
+        % &amp;&amp; [\muPg]
+        \\
+    &amp; \label{eq:SDPOPF:qg_bounds}
+        \qgmin_{i} \leq \QG_{i} \leq \qgmax_{i} 
+        &amp; \forall i &amp; \in \GENERATORS
+        % &amp;&amp; [\muQg]
+        \\
+    &amp; \label{eq:SDPOPF:wm_bounds}
+        \vmmin_{i}^{2} \leq \Wrsdp_{ii} \leq \vmmax_{i}^{2} 
+        &amp; \forall i &amp; \in \NODES
+        % &amp;&amp; [\muWm]
+        \\
+    &amp; \label{eq:SDPOPF:pf_bounds}
+        {-}\overline{S}_{e} \leq \PF_{e} \leq \overline{S}_{e}
+        &amp; \forall e &amp; \in \EDGES
+        % &amp;&amp; [\mu^{pf}]
+        \\
+    &amp; \label{eq:SDPOPF:qf_bounds}
+        {-}\overline{S}_{e} \leq \QF_{e} \leq \overline{S}_{e}
+        &amp; \forall e &amp; \in \EDGES
+        % &amp;&amp; [\mu^{qf}]
+        \\
+    &amp; \label{eq:SDPOPF:pt_bounds}
+        {-}\overline{S}_{e} \leq \PT_{e} \leq \overline{S}_{e}
+        &amp; \forall e &amp; \in \EDGES
+        % % &amp;&amp; [\mu^{pt}]
+        \\
+    &amp; \label{eq:SDPOPF:qt_bounds}
+        {-}\overline{S}_{e} \leq \QT_{e} \leq \overline{S}_{e}
+        &amp; \forall e &amp; \in \EDGES
+        % &amp;&amp; [\mu^{qt}]
+        \\
+    % PSD constraint
+    &amp; \label{eq:SDPOPF:psd}
+        \begin{pmatrix}
+            \Wrsdp &amp; \Wisdp \\
+            -\Wisdp &amp; \Wrsdp
+        \end{pmatrix} \in \psdsymmat^{2N}
+        &amp;
+        % &amp;&amp; [\Ssdp]
+\end{align}\]</p><div class="admonition is-info" id="Info-384bd117b89c5477"><header class="admonition-header">Info<a class="admonition-anchor" href="#Info-384bd117b89c5477" title="Permalink"></a></header><div class="admonition-body"><p>If there are multiple branches <span>$e_{1}, e_{2}, ...$</span> from bus <span>$i$</span> to <span>$j$</span>, then <span>$\Wrsdp_{e_{1}}, \Wrsdp_{e_{2}},...$</span> will all refer to the same <span>$\Wrsdp_{ij}$</span> entry in the matrix. Similarly for <span>$\Wisdp$</span>.</p></div></div><div class="admonition is-info" id="Info-9db4fad04f23caf4"><header class="admonition-header">Info<a class="admonition-anchor" href="#Info-9db4fad04f23caf4" title="Permalink"></a></header><div class="admonition-body"><p>If branch <span>$e \in \EDGES$</span> is connected from bus <span>$i$</span> to <span>$j$</span>, then <span>$\Wisdp_{e}$</span> refers to <span>$\Wisdp_{ij}$</span>. If instead branch <span>$e$</span> is connected from bus <span>$j$</span> to <span>$i$</span>, then <span>$\Wisdp_{e}$</span> refers to <span>$\Wisdp_{ji}$</span>, which by definition is equal to <span>$-\Wisdp_{ij}$</span>.</p></div></div><p>More details of the model can be found in <a href="https://arxiv.org/abs/2502.06978">Qiu, G., Tanneau, M., &amp; Van Hentenryck, P. (2025). Dual Conic Proxy for Semidefinite Relaxation of AC Optimal Power Flow. arXiv preprint arXiv:2502.06978.</a></p><h3 id="Variables"><a class="docs-heading-anchor" href="#Variables">Variables</a><a id="Variables-1"></a><a class="docs-heading-anchor-permalink" href="#Variables" title="Permalink"></a></h3><ul><li><span>$\PG \in \mathbb{R}^{G}$</span>: active power dispatch</li><li><span>$\QG \in \mathbb{R}^{G}$</span>: reactive power dispatch</li><li><span>$\Wrsdp \in \symmat^{N}$</span>: real part of voltage product</li><li><span>$\Wisdp \in \skewmat^{N}$</span>: imaginary part of voltage product</li><li><span>$\PF \in \mathbb{R}^{E}$</span>: active power flow &quot;from&quot;</li><li><span>$\QF \in \mathbb{R}^{E}$</span>: reactive power flow &quot;from&quot;</li><li><span>$\PT \in \mathbb{R}^{E}$</span>: active power flow &quot;to&quot;</li><li><span>$\QT \in \mathbb{R}^{E}$</span>: reactive power flow &quot;to&quot;</li></ul><h3 id="Objective"><a class="docs-heading-anchor" href="#Objective">Objective</a><a id="Objective-1"></a><a class="docs-heading-anchor-permalink" href="#Objective" title="Permalink"></a></h3><p>The objective function <span>$\eqref{eq:SDPOPF:objective}$</span> minimizes the cost of active power generation.</p><div class="admonition is-todo" id="Todo-e3e5c4c04ed1d04f"><header class="admonition-header">Todo<a class="admonition-anchor" href="#Todo-e3e5c4c04ed1d04f" title="Permalink"></a></header><div class="admonition-body"><p>PGLearn currently supports only linear cost functions. Support for quadratic functions is planned for a later stage; please open an issue if  you would like to request this feature.</p></div></div><h3 id="Constraints"><a class="docs-heading-anchor" href="#Constraints">Constraints</a><a id="Constraints-1"></a><a class="docs-heading-anchor-permalink" href="#Constraints" title="Permalink"></a></h3><ul><li><span>$\eqref{eq:SDPOPF:kcl_p}-\eqref{eq:SDPOPF:kcl_q}$</span>:   Kirchhoff&#39;s current law for active and reactive power</li><li><span>$\eqref{eq:SDPOPF:ohm_pf}-\eqref{eq:SDPOPF:ohm_qt}$</span>:   Ohm&#39;s law for active/reactive power flows in <em>from</em> and <em>to</em> directions</li><li><span>$\eqref{eq:SDPOPF:sm_f}-\eqref{eq:SDPOPF:sm_t}$</span>: thermal limits</li><li><span>$\eqref{eq:SDPOPF:va_diff}$</span>: voltage angle deviation constraints</li><li><span>$\eqref{eq:SDPOPF:pg_bounds}-\eqref{eq:SDPOPF:qg_bounds}$</span>: active/reactive generation limits</li><li><span>$\eqref{eq:SDPOPF:wm_bounds}$</span>: bounds on squared voltage magnitude</li><li><span>$\eqref{eq:SDPOPF:pf_bounds}-\eqref{eq:SDPOPF:qt_bounds}$</span>: power flow bounds, derived from thermal limits</li><li><span>$\eqref{eq:SDPOPF:psd}$</span>: positive semidefinite constraint</li></ul><div class="admonition is-info" id="Info-d9d838746fc2c821"><header class="admonition-header">Info<a class="admonition-anchor" href="#Info-d9d838746fc2c821" title="Permalink"></a></header><div class="admonition-body"><p>Although power flow variable bounds<span>$\eqref{eq:SDPOPF:pf_bounds}-\eqref{eq:SDPOPF:qt_bounds}$</span> are redundant with thermal limits <span>$\eqref{eq:SDPOPF:sm_f}-\eqref{eq:SDPOPF:sm_t}$</span>,  their inclusion improves the performance of interior-point solvers like Ipopt.</p></div></div><h2 id="Data-format"><a class="docs-heading-anchor" href="#Data-format">Data format</a><a id="Data-format-1"></a><a class="docs-heading-anchor-permalink" href="#Data-format" title="Permalink"></a></h2><h3 id="Primal-solution"><a class="docs-heading-anchor" href="#Primal-solution">Primal solution</a><a id="Primal-solution-1"></a><a class="docs-heading-anchor-permalink" href="#Primal-solution" title="Permalink"></a></h3><table><tr><th style="text-align: left">Variable</th><th style="text-align: left">Data</th><th style="text-align: left">Size</th><th style="text-align: left">Description</th></tr><tr><td style="text-align: left"><span>$diag(\Wrsdp)$</span></td><td style="text-align: left"><code>w</code></td><td style="text-align: left"><span>$N$</span></td><td style="text-align: left">Squared nodal voltage magnitude, the diagonal entries of <span>$\Wrsdp$</span></td></tr><tr><td style="text-align: left"><span>$\PG$</span></td><td style="text-align: left"><code>pg</code></td><td style="text-align: left"><span>$G$</span></td><td style="text-align: left">Active power generation</td></tr><tr><td style="text-align: left"><span>$\QG$</span></td><td style="text-align: left"><code>pg</code></td><td style="text-align: left"><span>$G$</span></td><td style="text-align: left">Reactive power generation</td></tr><tr><td style="text-align: left"><span>$\Wrsdp_{\EDGES}$</span></td><td style="text-align: left"><code>wr</code></td><td style="text-align: left"><span>$E$</span></td><td style="text-align: left">Voltage product variable (real part) corresponding to branches</td></tr><tr><td style="text-align: left"><span>$\Wisdp_{\EDGES}$</span></td><td style="text-align: left"><code>wi</code></td><td style="text-align: left"><span>$E$</span></td><td style="text-align: left">Voltage product variable (imaginary part) corresponding to branches</td></tr><tr><td style="text-align: left"><span>$\PF$</span></td><td style="text-align: left"><code>pf</code></td><td style="text-align: left"><span>$E$</span></td><td style="text-align: left">Active power flow (from)</td></tr><tr><td style="text-align: left"><span>$\PT$</span></td><td style="text-align: left"><code>pt</code></td><td style="text-align: left"><span>$E$</span></td><td style="text-align: left">Active power flow (to)</td></tr><tr><td style="text-align: left"><span>$\QF$</span></td><td style="text-align: left"><code>qf</code></td><td style="text-align: left"><span>$E$</span></td><td style="text-align: left">Reactive power flow (from)</td></tr><tr><td style="text-align: left"><span>$\QT$</span></td><td style="text-align: left"><code>qt</code></td><td style="text-align: left"><span>$E$</span></td><td style="text-align: left">Reactive power flow (to)</td></tr></table><p>Since <span>$\Wrsdp$</span> and <span>$\Wisdp$</span> can be dense, only the off-diagonal entries that correspond to branches are extracted to save space. Other entries only appear in constraints the positive semidefinite constraint <span>$\eqref{eq:SDPOPF:psd}$</span> and not other constraints. Therefore, values of these entries can be obtained by solving a positive semidefinite matrix completion problem to recover a full feasible matrix.</p><div class="admonition is-info" id="Info-250b6537fac19b12"><header class="admonition-header">Info<a class="admonition-anchor" href="#Info-250b6537fac19b12" title="Permalink"></a></header><div class="admonition-body"><p>If there are multiple parallel branches <span>$e_{1}, e_{2}, ...$</span> from bus <span>$i$</span> to <span>$j$</span>, the same entries <span>$\Wrsdp_{ij}$</span> and <span>$\Wisdp_{ij}$</span> are extracted for each of the branches.</p></div></div><h3 id="Dual-solution"><a class="docs-heading-anchor" href="#Dual-solution">Dual solution</a><a id="Dual-solution-1"></a><a class="docs-heading-anchor-permalink" href="#Dual-solution" title="Permalink"></a></h3><table><tr><th style="text-align: left">Constraint</th><th style="text-align: left">Data</th><th style="text-align: left">Size</th></tr><tr><td style="text-align: left"><span>$\eqref{eq:SDPOPF:kcl_p}$</span></td><td style="text-align: left"><code>kcl_p</code></td><td style="text-align: left"><span>$N$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SDPOPF:kcl_q}$</span></td><td style="text-align: left"><code>kcl_q</code></td><td style="text-align: left"><span>$N$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SDPOPF:ohm_pf}$</span></td><td style="text-align: left"><code>ohm_pf</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SDPOPF:ohm_qf}$</span></td><td style="text-align: left"><code>ohm_qf</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SDPOPF:ohm_pt}$</span></td><td style="text-align: left"><code>ohm_pt</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SDPOPF:ohm_qt}$</span></td><td style="text-align: left"><code>ohm_qt</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SDPOPF:sm_f}$</span></td><td style="text-align: left"><code>sm_fr</code></td><td style="text-align: left"><span>$E \times 3$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SDPOPF:sm_t}$</span></td><td style="text-align: left"><code>sm_to</code></td><td style="text-align: left"><span>$E \times 3$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SDPOPF:va_diff}$</span></td><td style="text-align: left"><code>va_diff</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SDPOPF:pg_bounds}$</span></td><td style="text-align: left"><code>pg</code></td><td style="text-align: left"><span>$G$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SDPOPF:qg_bounds}$</span></td><td style="text-align: left"><code>qg</code></td><td style="text-align: left"><span>$G$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SDPOPF:wm_bounds}$</span></td><td style="text-align: left"><code>w</code></td><td style="text-align: left"><span>$N$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SDPOPF:pf_bounds}$</span></td><td style="text-align: left"><code>pf</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SDPOPF:qf_bounds}$</span></td><td style="text-align: left"><code>qf</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SDPOPF:pt_bounds}$</span></td><td style="text-align: left"><code>pt</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SDPOPF:qt_bounds}$</span></td><td style="text-align: left"><code>qt</code></td><td style="text-align: left"><span>$E$</span></td></tr><tr><td style="text-align: left"><span>$\eqref{eq:SDPOPF:psd}$</span></td><td style="text-align: left"><code>s</code>, <code>sr</code>, <code>si</code></td><td style="text-align: left"><span>$N$</span>, <span>$E$</span>, <span>$E$</span></td></tr></table><p>The dual variable corresponding to the positive semidefinite constraint <span>$\eqref{eq:SDPOPF:psd}$</span> of the real SDP-OPF is <span>$\Ssdp$</span> which is constrained to be in <span>$\psdsymmat^{2N}$</span>.</p><p>By deriving the dual of the complex SDP formulation, it can be shown that any feasible <span>$\Ssdp$</span> in the real formulation has the same 4-block structure as the primal matrix, and each block has a sparsity structure corresponding to <span>$\EDGES$</span>. Without considering the complex formulation, the dual problem of the real formulation also implies a transformation to obtain such a feasible sparse 4-block matrix from any feasible <span>$\Ssdp$</span> easily. Therefore, without loss of generality,</p><p class="math-container">\[\Ssdp =
+\begin{pmatrix}
+    \Srsdp &amp; \Sisdp \\
+    -\Sisdp &amp; \Srsdp
+\end{pmatrix}\]</p><p>where the off-diagonal entries of <span>$\Srsdp \in \symmat^{N}$</span> and <span>$\Sisdp \in \skewmat^{N}$</span> that don&#39;t correspond to any branch are 0.</p><div class="admonition is-info" id="Info-526e84015934bfe"><header class="admonition-header">Info<a class="admonition-anchor" href="#Info-526e84015934bfe" title="Permalink"></a></header><div class="admonition-body"><p>Currently, there is no necessity to compute the aforementioned transformation, since interior point solvers and splitting cone solvers are observed to produce <span>$\Ssdp$</span> with the sparse 4-block structure when solving SDP-OPF, even though sparsity is not explicitly exploited.</p></div></div><p><code>s</code>, <code>sr</code> and <code>si</code> are the diagonal entries of <span>$\Srsdp$</span>, the off-diagonal entries of <span>$\Srsdp$</span> that correspond to branches, and the off-diagonal entries of <span>$\Sisdp$</span> that correspond to branches, respectively. Unlike in the primal case, these values are sufficient to directly reconstruct the original <span>$\Ssdp$</span>.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../acp/">« AC-OPF</a><a class="docs-footer-nextpage" href="../socwr/">SOC-OPF »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Wednesday 17 December 2025 23:36">Wednesday 17 December 2025</span>. Using Julia version 1.12.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
